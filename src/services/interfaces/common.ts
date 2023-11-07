@@ -52,6 +52,7 @@ export interface IProductModel {
   price: number;
   description: string;
   stores: IStoreModel[];
+  relevance: number;
   brand: IBrandModel;
   category: ICategoryModel;
   images: IImageModel[];
