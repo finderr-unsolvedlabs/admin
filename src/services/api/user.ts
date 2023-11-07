@@ -31,14 +31,10 @@ const signIn = (props: ISingInForm): Promise<AxiosResponse<string>> => {
   });
 };
 
-const createProductLead = (productSlug: string) => {
-  return sendRequest(leadUrl, { method: "post", data: { productSlug } });
-};
-
 // TODO: move to admin
 const fetchLeads = (): Promise<AxiosResponse<ILeadModel[]>> => {
   return sendRequest(`/website/get-leads`);
 };
 
-const UserApi = { verifyOtp, createProductLead, signIn, fetchLeads };
+const UserApi = { verifyOtp, signIn, fetchLeads };
 export { UserApi };
