@@ -1,12 +1,14 @@
 import { ProductApi } from "@/services/api/product";
-import { IProductModel, TOption } from "@/services/interfaces/common";
-import { startCase } from "lodash";
+import { IProductModel, TAlerts, TOption } from "@/services/interfaces/common";
+import { add, concat, includes, remove, startCase, without } from "lodash";
 import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { useFormik } from "formik";
 import ArrowForward from "@mui/icons-material/ArrowForward";
 import { CategorySelector } from "@/components/selectors/CategorySelector";
 import ProductTagSelector from "@/components/selectors/ProductTagsSelector";
+import { Alert, AlertTitle, Snackbar } from "@mui/material";
+import { useState } from "react";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ slug: string }>
@@ -22,6 +24,11 @@ export async function getServerSideProps(
   }
 }
 
+export interface IProductFrom {
+  category: TOption;
+  tags: string[];
+}
+
 type Props = {
   product: IProductModel;
   nextProduct: string;
@@ -29,7 +36,60 @@ type Props = {
 const ProductPage = ({ product, nextProduct }: Props) => {
   const router = useRouter();
 
-  const onCategoryChange = (item: TOption | null) => {};
+  const [alerts, setAlerts] = useState<TAlerts[]>([]);
+
+  const onCategoryChange = (item: TOption | null) => {
+    if (item) {
+      formik.setFieldValue("category", item);
+    }
+  };
+
+  const onTagToggle = (slug: string) => {
+    let updated: string[];
+    if (includes(formik.values.tags, slug)) {
+      updated = without(formik.values.tags, slug);
+    } else {
+      updated = concat(formik.values.tags, slug);
+    }
+    formik.setFieldValue("tags", updated);
+  };
+
+  const initialState: IProductFrom = {
+    category: {
+      label: product.category.name,
+      value: product.category.slug,
+    },
+    tags: product.tags.map((x) => x.slug),
+  };
+
+  const formik = useFormik({
+    initialValues: initialState,
+    onSubmit: (values) => {
+      ProductApi.update(product.slug, {
+        category: values.category.value,
+        tags: values.tags,
+      })
+        .then(() => {
+          setAlerts([
+            {
+              title: "Success!",
+              description: "product updated successfully.",
+              type: "success",
+            },
+          ]);
+        })
+        .catch((err) => {
+          console.log(err);
+          setAlerts([
+            {
+              title: "failed!",
+              description: err.message,
+              type: "error",
+            },
+          ]);
+        });
+    },
+  });
 
   return (
     <>
@@ -75,11 +135,8 @@ const ProductPage = ({ product, nextProduct }: Props) => {
 
           <div>
             <CategorySelector
-              value={{
-                label: product.category.name,
-                value: product.category.slug,
-              }}
-              onchange={onCategoryChange}
+              value={formik.values.category}
+              onchange={(item) => onCategoryChange(item)}
             />
           </div>
 
@@ -89,18 +146,25 @@ const ProductPage = ({ product, nextProduct }: Props) => {
               Tags:
             </div>
 
-            <ProductTagSelector />
+            <ProductTagSelector
+              tags={formik.values.tags}
+              onToggle={onTagToggle}
+            />
           </div>
 
           {/* SECTION: action buttons */}
           <div className="flex justify-between mt-10">
-            <div className="bg-brand text-white text-lg cursor-pointer font-medium px-5 py-2 rounded-lg">
+            <div
+              className="bg-brand text-white text-lg cursor-pointer font-medium px-5 py-2 rounded-lg"
+              onClick={() => formik.handleSubmit()}
+            >
               Save
             </div>
             <div
               className="px-3 flex justify-center text-lg cursor-pointer items-center gap-1 py-2 border border-brand rounded-lg text-brand font-medium"
               onClick={() => {
-                router.push(`/admin/products/${nextProduct}`);
+                window.location.href = `/admin/products/${nextProduct}`;
+                // router.push(`/admin/products/${nextProduct}`, {});
               }}
             >
               Next <ArrowForward />
@@ -108,6 +172,24 @@ const ProductPage = ({ product, nextProduct }: Props) => {
           </div>
         </div>
       </div>
+
+      {/* SECTION: page Alerts */}
+
+      {alerts.map((_alert) => (
+        <Snackbar
+          open
+          onClose={() => {
+            setAlerts([]);
+          }}
+        >
+          <Alert severity={_alert.type} className="min-w-[300px]">
+            <AlertTitle className="font-bold uppercase">
+              {_alert.title}
+            </AlertTitle>
+            {_alert.description}
+          </Alert>
+        </Snackbar>
+      ))}
     </>
   );
 };

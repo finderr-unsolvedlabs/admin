@@ -1,3 +1,5 @@
+import { AlertColor } from "@mui/material";
+
 // Interfaces of models
 export interface IImageModel {
   _id: string;
@@ -61,6 +63,7 @@ export interface IProductModel {
   relevance: number;
   brand: IBrandModel;
   category: ICategoryModel;
+  tags: IProductTagModel[];
   images: IImageModel[];
 }
 
@@ -108,4 +111,10 @@ export interface IOfferModel extends IBaseInfo {
 export type TOption = {
   label: string;
   value: string;
+};
+
+export type TAlerts = {
+  title: string;
+  description: string;
+  type: AlertColor;
 };
