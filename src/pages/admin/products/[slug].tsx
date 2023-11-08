@@ -131,6 +131,10 @@ const ProductPage = ({ product, nextProduct }: Props) => {
                 {product.price.toLocaleString("en-In")}
               </p>
             </div>
+            <div>
+              <div className="font-medium mb-2">Brand:</div>
+              <p className="text-gray-600">{product.brand.name}</p>
+            </div>
           </div>
 
           <div>
