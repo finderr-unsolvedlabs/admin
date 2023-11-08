@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import ArrowForward from "@mui/icons-material/ArrowForward";
 import { CategorySelector } from "@/components/selectors/CategorySelector";
+import ProductTagSelector from "@/components/selectors/ProductTagsSelector";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ slug: string }>
@@ -32,7 +33,7 @@ const ProductPage = ({ product, nextProduct }: Props) => {
 
   return (
     <>
-      <div className="w-11/12 mx-auto flex my-5 gap-3">
+      <div className="w-11/12 mx-auto flex my-10 gap-5">
         <div className="w-2/5">
           <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
             {product.images.map((image) => (
@@ -80,6 +81,15 @@ const ProductPage = ({ product, nextProduct }: Props) => {
               }}
               onchange={onCategoryChange}
             />
+          </div>
+
+          <div>
+            <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-400" />
+            <div className="text-xl text-gray-500 font-semibold mb-5">
+              Tags:
+            </div>
+
+            <ProductTagSelector />
           </div>
 
           {/* SECTION: action buttons */}

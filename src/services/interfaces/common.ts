@@ -45,6 +45,12 @@ export interface ICategoryModel {
   parent: null | ICategoryModel;
 }
 
+export interface IProductTagModel {
+  name: string;
+  slug: string;
+  groupName: string;
+}
+
 export interface IProductModel {
   _id: string;
   slug: string;
