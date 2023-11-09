@@ -91,9 +91,7 @@ const ProductPage = ({ product, nextProduct }: Props) => {
               type: "success",
             },
           ]);
-          setTimeout(() => {
-            window.location.href = `/admin/products/${nextProduct}`;
-          }, 1000);
+          window.location.href = `/admin/products/${nextProduct}`;
         })
         .catch((err) => {
           console.error(err);
@@ -129,7 +127,7 @@ const ProductPage = ({ product, nextProduct }: Props) => {
           <div>
             <div className="font-medium mb-2">Description:</div>
             {product.description ? (
-              <p className="text-gray-600">{product.description}</p>
+              <p className="text-gray-600 truncate">{product.description}</p>
             ) : (
               <span className="text-gray-500 italic font-light">
                 no description
@@ -138,16 +136,25 @@ const ProductPage = ({ product, nextProduct }: Props) => {
           </div>
 
           <div className="flex gap-14">
-            <div>
+            <div className="flex-1">
+              <CategorySelector
+                value={formik.values.category}
+                onchange={(item) => onCategoryChange(item)}
+              />
+            </div>
+
+            {/* <div>
               <div className="font-medium mb-2">Relevance:</div>
               <p className="text-gray-600">{product.relevance}</p>
-            </div>
+            </div> */}
+
             <div>
               <div className="font-medium mb-2">Price:</div>
               <p className="text-gray-600">
                 {product.price.toLocaleString("en-In")}
               </p>
             </div>
+
             <div>
               <div className="font-medium mb-2">Brand:</div>
               <p className="text-gray-600">{product.brand.name}</p>
@@ -155,17 +162,10 @@ const ProductPage = ({ product, nextProduct }: Props) => {
           </div>
 
           <div>
-            <CategorySelector
-              value={formik.values.category}
-              onchange={(item) => onCategoryChange(item)}
-            />
-          </div>
-
-          <div>
-            <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-400" />
-            <div className="text-xl text-gray-500 font-semibold mb-5">
+            {/* <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-400" /> */}
+            {/* <div className="text-xl text-gray-500 font-semibold mb-5">
               Tags:
-            </div>
+            </div> */}
 
             <ProductTagSelector
               tags={formik.values.tags}
@@ -174,7 +174,7 @@ const ProductPage = ({ product, nextProduct }: Props) => {
           </div>
 
           {/* SECTION: action buttons */}
-          <div className="flex justify-between gap-10 mt-10">
+          <div className="flex justify-between gap-10 mt-5">
             <div
               className="px-3 flex justify-center text-lg cursor-pointer items-center flex-1 gap-1 py-2 border border-brand rounded-lg text-brand font-medium"
               onClick={() => {
