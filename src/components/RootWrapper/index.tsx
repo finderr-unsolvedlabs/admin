@@ -10,7 +10,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-function index({ children }: Props) {
+function RootWrapper({ children }: Props) {
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -29,4 +29,4 @@ function index({ children }: Props) {
   return <div>{children}</div>;
 }
 
-export default index;
+export default RootWrapper;

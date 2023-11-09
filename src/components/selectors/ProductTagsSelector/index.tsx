@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 
 type Props = { tags: string[]; onToggle: (slug: string) => void };
 
-const index = ({ tags, onToggle }: Props) => {
+const ProductTagSelector = ({ tags, onToggle }: Props) => {
   const [tagsList, setTagsList] = useState<Dictionary<IProductTagModel[]>>();
   const [tagGroups, setTagGroups] = useState<string[]>([]);
 
@@ -21,12 +21,13 @@ const index = ({ tags, onToggle }: Props) => {
     <div className="flex flex-col gap-5">
       {tagGroups.map((groupName) => {
         return (
-          <div>
+          <div key={groupName}>
             <div className="font-medium mb-2">{startCase(groupName)}</div>
             <div className="flex flex-wrap gap-3">
               {tagsList &&
                 tagsList[groupName].map((tag) => (
                   <div
+                    key={tag.slug}
                     onClick={() => onToggle(tag.slug)}
                     className={`p-2 rounded min-w-[50px] text-center cursor-pointer
                      ${
@@ -47,4 +48,4 @@ const index = ({ tags, onToggle }: Props) => {
   );
 };
 
-export default index;
+export default ProductTagSelector;

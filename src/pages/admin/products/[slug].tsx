@@ -114,7 +114,7 @@ const ProductPage = ({ product, nextProduct }: Props) => {
         <div className="w-2/5">
           <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
             {product.images.map((image) => (
-              <div>
+              <div key={image.slug}>
                 <img
                   className="h-auto max-w-full rounded-lg"
                   src={image.url}
@@ -196,8 +196,9 @@ const ProductPage = ({ product, nextProduct }: Props) => {
 
       {/* SECTION: page Alerts */}
 
-      {alerts.map((_alert) => (
+      {alerts.map((_alert, index) => (
         <Snackbar
+          key={index}
           open
           onClose={() => {
             setAlerts([]);
