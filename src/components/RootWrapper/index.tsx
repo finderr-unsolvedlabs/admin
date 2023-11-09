@@ -2,6 +2,9 @@ import { IStore } from "@/services/interfaces/redux";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Cookies from "js-cookie";
+import { USER_TOKEN } from "@/utils/constants/cookiesName";
+import { setUserLoggedIn } from "@/store/userSlice";
 
 type Props = {
   children: React.ReactNode;
@@ -14,10 +17,14 @@ function index({ children }: Props) {
   const user = useSelector((store: IStore) => store.user);
 
   useEffect(() => {
-    if (!user.userLoggedIn) {
+    // redux updates
+    const token = Cookies.get(USER_TOKEN);
+    if (token) {
+      dispatch(setUserLoggedIn(true));
+    } else {
       router.replace("/");
     }
-  }, [user.userLoggedIn]);
+  }, []);
 
   return <div>{children}</div>;
 }
