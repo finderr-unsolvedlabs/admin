@@ -5,8 +5,11 @@ import { IProductUpdateForm } from "../interfaces/forms";
 
 const baseUrl = `/admin/products`;
 
-const getProduct = (slug: string): Promise<AxiosResponse<IProductModel>> => {
-  return sendRequest(`${baseUrl}/${slug}`);
+const getProduct = (
+  slug: string,
+  token?: string
+): Promise<AxiosResponse<IProductModel>> => {
+  return sendRequest(`${baseUrl}/${slug}`, {}, token);
 };
 
 const update = (

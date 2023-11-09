@@ -9,18 +9,32 @@ import { CategorySelector } from "@/components/selectors/CategorySelector";
 import ProductTagSelector from "@/components/selectors/ProductTagsSelector";
 import { Alert, AlertTitle, Snackbar } from "@mui/material";
 import { useState } from "react";
+import { USER_TOKEN } from "@/utils/constants/cookiesName";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ slug: string }>
 ) {
-  const slug = context.params?.slug;
-  if (slug) {
-    const productPageData = await ProductApi.getProduct(slug);
+  try {
+    const slug = context.params?.slug;
+    if (slug) {
+      const productPageData = await ProductApi.getProduct(
+        slug,
+        context.req.cookies[USER_TOKEN]
+      );
+      return {
+        props: { ...productPageData.data },
+      };
+    } else {
+      throw "slug is not specified";
+    }
+  } catch (err) {
+    console.log(err);
+    context.res.writeHead(302, { Location: "/" });
+    context.res.end();
+
     return {
-      props: { ...productPageData.data },
+      props: {},
     };
-  } else {
-    console.error(`\n\n slug is not specified \n\n`);
   }
 }
 
@@ -53,6 +67,8 @@ const ProductPage = ({ product, nextProduct }: Props) => {
     }
     formik.setFieldValue("tags", updated);
   };
+
+  console.log(product);
 
   const initialState: IProductFrom = {
     category: {
