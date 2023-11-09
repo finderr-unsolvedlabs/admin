@@ -77,6 +77,9 @@ const ProductPage = ({ product, nextProduct }: Props) => {
               type: "success",
             },
           ]);
+          setTimeout(() => {
+            window.location.href = `/admin/products/${nextProduct}`;
+          }, 1000);
         })
         .catch((err) => {
           console.log(err);
@@ -157,21 +160,21 @@ const ProductPage = ({ product, nextProduct }: Props) => {
           </div>
 
           {/* SECTION: action buttons */}
-          <div className="flex justify-between mt-10">
+          <div className="flex justify-between gap-10 mt-10">
             <div
-              className="bg-brand text-white text-lg cursor-pointer font-medium px-5 py-2 rounded-lg"
-              onClick={() => formik.handleSubmit()}
-            >
-              Save
-            </div>
-            <div
-              className="px-3 flex justify-center text-lg cursor-pointer items-center gap-1 py-2 border border-brand rounded-lg text-brand font-medium"
+              className="px-3 flex justify-center text-lg cursor-pointer items-center flex-1 gap-1 py-2 border border-brand rounded-lg text-brand font-medium"
               onClick={() => {
                 window.location.href = `/admin/products/${nextProduct}`;
                 // router.push(`/admin/products/${nextProduct}`, {});
               }}
             >
               Next <ArrowForward />
+            </div>
+            <div
+              className="bg-brand text-white text-lg text-center cursor-pointer font-medium px-5 py-2 rounded-lg flex-1"
+              onClick={() => formik.handleSubmit()}
+            >
+              Save
             </div>
           </div>
         </div>
