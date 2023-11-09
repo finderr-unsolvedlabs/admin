@@ -68,8 +68,6 @@ const ProductPage = ({ product, nextProduct }: Props) => {
     formik.setFieldValue("tags", updated);
   };
 
-  console.log(product);
-
   const initialState: IProductFrom = {
     category: {
       label: product.category.name,
@@ -98,7 +96,7 @@ const ProductPage = ({ product, nextProduct }: Props) => {
           }, 1000);
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
           setAlerts([
             {
               title: "failed!",
