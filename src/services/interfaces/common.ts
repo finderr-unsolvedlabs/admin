@@ -113,6 +113,8 @@ export type TOption = {
   value: string;
 };
 
+export type TSelectorOptions = null | TOption | TOption[];
+
 export type TAlerts = {
   title: string;
   description: string;
