@@ -20,7 +20,7 @@ export default function Home({}) {
           password: data.password,
           username: data.username,
         }).then((response) => {
-          Cookies.set(USER_TOKEN, response.data.token);
+          Cookies.set(USER_TOKEN, response.data.token, { expires: 30 });
           dispatch(setUserLoggedIn(true));
           router.replace("/admin/products/green-and-fuschia-lehenga-saree");
         });
