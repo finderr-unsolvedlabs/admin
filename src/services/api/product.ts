@@ -5,6 +5,28 @@ import { IProductUpdateForm } from "../interfaces/forms";
 
 const baseUrl = `/admin/products`;
 
+interface IListResponse {
+  data: {
+    products: IProductModel[];
+    totalCount: number;
+  };
+}
+
+export interface TProductSearchParams {
+  brands?: string[];
+  categories?: string[];
+  search_query?: string;
+}
+
+const list = (
+  props: Partial<TProductSearchParams>
+): Promise<AxiosResponse<IListResponse>> => {
+  return sendRequest(`${baseUrl}`, {
+    method: "get",
+    params: { ...props },
+  });
+};
+
 const getProduct = (
   slug: string,
   token?: string
@@ -19,5 +41,5 @@ const update = (
   return sendRequest(`${baseUrl}/${slug}`, { method: "POST", data: form });
 };
 
-const ProductApi = { getProduct, update };
+const ProductApi = { getProduct, update, list };
 export { ProductApi };

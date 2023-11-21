@@ -139,14 +139,9 @@ const ProductPage = ({ product, nextProduct }: Props) => {
             <div className="flex-1">
               <CategorySelector
                 value={formik.values.category}
-                onchange={(item) => onCategoryChange(item)}
+                onchange={(item) => onCategoryChange(item as TOption)}
               />
             </div>
-
-            {/* <div>
-              <div className="font-medium mb-2">Relevance:</div>
-              <p className="text-gray-600">{product.relevance}</p>
-            </div> */}
 
             <div>
               <div className="font-medium mb-2">Price:</div>
@@ -162,11 +157,6 @@ const ProductPage = ({ product, nextProduct }: Props) => {
           </div>
 
           <div>
-            {/* <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-400" /> */}
-            {/* <div className="text-xl text-gray-500 font-semibold mb-5">
-              Tags:
-            </div> */}
-
             <ProductTagSelector
               tags={formik.values.tags}
               onToggle={onTagToggle}
