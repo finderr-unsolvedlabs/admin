@@ -19,7 +19,10 @@ const AdminSidebar = (props: Props) => {
       </div>
       {routes.map((route) => {
         return (
-          <div className="text-slate-800 text-lg font-medium p-2 border-b-2 ">
+          <div
+            className="text-slate-800 text-lg font-medium p-2 border-b-2"
+            key={route}
+          >
             <Link href={route}>
               <div>{startCase(route)}</div>
             </Link>

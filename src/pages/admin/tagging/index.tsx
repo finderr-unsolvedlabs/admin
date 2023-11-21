@@ -179,6 +179,7 @@ const Main = () => {
         <div className="grid grid-cols-5 gap-4">
           {products.map((product) => (
             <div
+              key={product.slug}
               className={`cursor-pointer relative`}
               onClick={() => {
                 handleProductClick(product.slug);
