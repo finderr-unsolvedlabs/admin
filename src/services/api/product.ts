@@ -16,6 +16,7 @@ export interface TProductSearchParams {
   brands?: string[];
   categories?: string[];
   search_query?: string;
+  tags?: string[];
 }
 
 const list = (
