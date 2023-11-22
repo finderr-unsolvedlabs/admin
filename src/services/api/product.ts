@@ -17,6 +17,7 @@ export interface TProductSearchParams {
   categories?: string[];
   search_query?: string;
   tags?: string[];
+  excluded_tags?: string[];
 }
 
 const list = (

@@ -43,7 +43,8 @@ const BulkTaggingProductCard = ({
             className="text-sm font-medium cursor-pointer"
             onClick={() => {
               navigator.clipboard.writeText(product.slug);
-              alert("Slug copied successfully!");
+              // TODO: add alert without ok button
+              // alert("Slug copied successfully!");
             }}
           >
             {product.name}

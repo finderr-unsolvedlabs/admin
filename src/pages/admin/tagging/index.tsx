@@ -17,6 +17,7 @@ type TInitialValeSearch = {
   brands?: TOption[];
   categories?: TOption[];
   tags?: TOption[];
+  excluded_tags?: TOption[];
   search_query?: string;
 };
 
@@ -44,6 +45,7 @@ const Main = () => {
         categories: values.categories?.map((x) => x.value),
         brands: values.brands?.map((x) => x.value),
         tags: values.tags?.map((x) => x.value),
+        excluded_tags: values.excluded_tags?.map((x) => x.value),
       };
       ProductApi.list(params)
         .then(({ data: { data } }) => {
@@ -95,6 +97,24 @@ const Main = () => {
       </div>
 
       <div className="flex flex-col my-5 gap-3">
+        <TagsSelectorDropdown
+          isMulti
+          value={queryForm.values.tags || null}
+          label="Tags to Include"
+          withSelectAll
+          onchange={(options) => queryForm.setFieldValue("tags", options)}
+        />
+
+        <TagsSelectorDropdown
+          isMulti
+          withSelectAll
+          value={queryForm.values.excluded_tags || null}
+          label="Tags to Exclude"
+          onchange={(options) =>
+            queryForm.setFieldValue("excluded_tags", options)
+          }
+        />
+
         <CategorySelector
           value={queryForm.values.categories || null}
           isMulti
@@ -105,12 +125,6 @@ const Main = () => {
           value={queryForm.values.brands || null}
           isMulti
           onchange={(options) => queryForm.setFieldValue("brands", options)}
-        />
-
-        <TagsSelectorDropdown
-          isMulti
-          value={queryForm.values.tags || null}
-          onchange={(options) => queryForm.setFieldValue("tags", options)}
         />
       </div>
 
