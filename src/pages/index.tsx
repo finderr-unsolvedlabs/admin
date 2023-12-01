@@ -1,6 +1,6 @@
 import { ILogInForm, UserApi } from "@/services/api/user";
 import { setUserLoggedIn } from "@/store/userSlice";
-import { USER_TOKEN } from "@/utils/constants/cookiesName";
+import { ADMIN_TOKEN } from "@/utils/constants/cookiesName";
 import { useFormik } from "formik";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
@@ -20,7 +20,7 @@ export default function Home({}) {
           password: data.password,
           username: data.username,
         }).then((response) => {
-          Cookies.set(USER_TOKEN, response.data.token, { expires: 30 });
+          Cookies.set(ADMIN_TOKEN, response.data.token, { expires: 30 });
           dispatch(setUserLoggedIn(true));
           router.replace("/admin/products/green-and-fuschia-lehenga-saree");
         });

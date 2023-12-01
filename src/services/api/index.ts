@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import Qs from "qs";
 import Cookies from "js-cookie";
-import { USER_TOKEN } from "@/utils/constants/cookiesName";
+import { ADMIN_TOKEN } from "@/utils/constants/cookiesName";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -33,7 +33,7 @@ const sendRequest = (
   overriddenToken = ""
 ) => {
   let accessToken;
-  const cookieToken = Cookies.get(USER_TOKEN);
+  const cookieToken = Cookies.get(ADMIN_TOKEN);
 
   if (overriddenToken) {
     accessToken = overriddenToken;

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
-import { USER_TOKEN } from "@/utils/constants/cookiesName";
+import { ADMIN_TOKEN } from "@/utils/constants/cookiesName";
 import { setUserLoggedIn } from "@/store/userSlice";
 
 type Props = {
@@ -18,7 +18,7 @@ function RootWrapper({ children }: Props) {
 
   useEffect(() => {
     // redux updates
-    const token = Cookies.get(USER_TOKEN);
+    const token = Cookies.get(ADMIN_TOKEN);
     if (token) {
       dispatch(setUserLoggedIn(true));
     } else {

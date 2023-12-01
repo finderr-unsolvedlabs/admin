@@ -9,7 +9,7 @@ import { CategorySelector } from "@/components/selectors/CategorySelector";
 import ProductTagSelector from "@/components/selectors/ProductTagsSelector";
 import { Alert, AlertTitle, Snackbar } from "@mui/material";
 import { useState } from "react";
-import { USER_TOKEN } from "@/utils/constants/cookiesName";
+import { ADMIN_TOKEN } from "@/utils/constants/cookiesName";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ slug: string }>
@@ -19,7 +19,7 @@ export async function getServerSideProps(
     if (slug) {
       const productPageData = await ProductApi.getProduct(
         slug,
-        context.req.cookies[USER_TOKEN]
+        context.req.cookies[ADMIN_TOKEN]
       );
       return {
         props: { ...productPageData.data },
