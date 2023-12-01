@@ -5,23 +5,35 @@ import { IProductModel, TOption } from "@/services/interfaces/common";
 import { CategorySelector } from "@/components/selectors/CategorySelector";
 import { BrandSelector } from "@/components/selectors/BrandSelector";
 import { useFormik } from "formik";
-import { ProductApi, TProductSearchParams } from "@/services/api/product";
-import { includes, without } from "lodash";
-import { Divider } from "@mui/material";
+import {
+  ProductApi,
+  TProductSearchParams,
+  TSearchQueryOptions,
+} from "@/services/api/product";
+import { includes, startCase, without } from "lodash";
+import { Checkbox, Divider } from "@mui/material";
 import { TagsSelectorDropdown } from "@/components/selectors/ProductTagsSelector/TagsSelectorDropdown";
 import { ProductTagApi } from "@/services/api/productTags";
 import { BulkTaggingProductCard } from "@/components/ProductCard/BulkTaggingProductCard";
+import { booleanArrayUpdate } from "@/utils/helper_functions/booleanArrayUpdate";
 
 type Props = {};
 type TInitialValeSearch = {
   brands?: TOption[];
   categories?: TOption[];
+  search_query?: string;
+  search_query_from?: TSearchQueryOptions[];
   tags?: TOption[];
   excluded_tags?: TOption[];
-  search_query?: string;
 };
 
-const Brands = (props: Props) => {
+const availableSearchOptions: TSearchQueryOptions[] = [
+  "name",
+  "scraped_slug",
+  "description",
+];
+
+const Tagging = (props: Props) => {
   return (
     <SidebarLayout
       MainComponent={<Main />}
@@ -37,7 +49,9 @@ const Main = () => {
   const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [isApplyLoading, setIsApplyLoading] = useState(false);
 
-  const initialValeSearch: TInitialValeSearch = {};
+  const initialValeSearch: TInitialValeSearch = {
+    search_query_from: ["name", "scraped_slug"],
+  };
 
   const queryForm = useFormik({
     initialValues: initialValeSearch,
@@ -45,6 +59,7 @@ const Main = () => {
       setIsSearchLoading(true);
       const params: TProductSearchParams = {
         search_query: values.search_query,
+        search_query_from: values.search_query_from,
         categories: values.categories?.map((x) => x.value),
         brands: values.brands?.map((x) => x.value),
         tags: values.tags?.map((x) => x.value),
@@ -74,18 +89,49 @@ const Main = () => {
   return (
     <div className="p-4">
       <h1 className="font-semibold text-xl">Tagging</h1>
-      <div className="flex my-3 items-center gap-5">
-        <input
-          type="text"
-          placeholder="type here..."
-          className="border rounded p-1 flex-1"
-          value={queryForm.values.search_query || ""}
-          onChange={(e) => {
-            if (e.target) {
-              queryForm.setFieldValue("search_query", e.target.value || null);
-            }
-          }}
-        />
+      <div className="flex mt-5 mb-3 items-end gap-5">
+        <div className="flex-1">
+          <div className="flex gap-6">
+            {availableSearchOptions.map((entity) => {
+              return (
+                <div key={entity}>
+                  <Checkbox
+                    size="small"
+                    id={entity}
+                    checked={includes(
+                      queryForm.values.search_query_from,
+                      entity
+                    )}
+                    onChange={(e) => {
+                      const updated = booleanArrayUpdate(
+                        e.target.checked ? "add" : "remove",
+                        queryForm.values.search_query_from || [],
+                        [entity]
+                      );
+
+                      queryForm.setFieldValue("search_query_from", updated);
+                    }}
+                  />
+                  <label htmlFor={entity} className="text-sm cursor-pointer">
+                    {startCase(entity)}
+                  </label>
+                </div>
+              );
+            })}
+          </div>
+
+          <input
+            type="text"
+            placeholder="type here..."
+            className="border rounded p-1 w-full"
+            value={queryForm.values.search_query || ""}
+            onChange={(e) => {
+              if (e.target) {
+                queryForm.setFieldValue("search_query", e.target.value || null);
+              }
+            }}
+          />
+        </div>
 
         <div
           className="bg-brand text-white w-48 text-center py-1 rounded cursor-pointer  border border-brand hover:text-brand hover:bg-white"
@@ -215,4 +261,4 @@ const Main = () => {
   );
 };
 
-export default Brands;
+export default Tagging;

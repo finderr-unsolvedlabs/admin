@@ -12,10 +12,13 @@ interface IListResponse {
   };
 }
 
+export type TSearchQueryOptions = "name" | "description" | "scraped_slug";
+
 export interface TProductSearchParams {
   brands?: string[];
   categories?: string[];
   search_query?: string;
+  search_query_from?: TSearchQueryOptions[];
   tags?: string[];
   excluded_tags?: string[];
 }
