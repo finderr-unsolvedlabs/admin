@@ -1,7 +1,9 @@
 import { IProductModel } from "@/services/interfaces/common";
 import { Card, CardContent, CardMedia, Divider } from "@mui/material";
 import randomColor from "randomcolor";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
+import Link from "next/link";
 
 type Props = {
   product: IProductModel;
@@ -39,15 +41,17 @@ const BulkTaggingProductCard = ({
           />
         </div>
         <CardContent>
-          <div
-            className="text-sm font-medium cursor-pointer"
-            onClick={() => {
-              navigator.clipboard.writeText(product.slug);
-              // TODO: add alert without ok button
-              // alert("Slug copied successfully!");
-            }}
-          >
-            {product.name}
+          <div className="flex text-sm font-medium cursor-pointer">
+            <Link href={`/admin/products/${product.slug}`} target="_blank">
+              <p className="flex-1">{product.name}</p>
+            </Link>
+            <div
+              onClick={() => {
+                navigator.clipboard.writeText(product.slug);
+              }}
+            >
+              <ContentCopyIcon className="text-sm text-gray-500" />
+            </div>
           </div>
           <Divider className="my-2" />
           <div className="flex flex-wrap gap-1">

@@ -34,12 +34,15 @@ const Main = () => {
   const [products, setProducts] = useState<IProductModel[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [tags, setTags] = useState<TOption[]>([]);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
+  const [isApplyLoading, setIsApplyLoading] = useState(false);
 
   const initialValeSearch: TInitialValeSearch = {};
 
   const queryForm = useFormik({
     initialValues: initialValeSearch,
     onSubmit: (values) => {
+      setIsSearchLoading(true);
       const params: TProductSearchParams = {
         search_query: values.search_query,
         categories: values.categories?.map((x) => x.value),
@@ -52,7 +55,10 @@ const Main = () => {
           setProducts(data.products);
         })
         .catch((err) => {
-          alert(err);
+          alert(JSON.stringify(err));
+        })
+        .finally(() => {
+          setIsSearchLoading(false);
         });
     },
   });
@@ -88,7 +94,7 @@ const Main = () => {
             queryForm.handleSubmit();
           }}
         >
-          Search
+          {isSearchLoading ? "..." : "Search"}
         </div>
 
         <div className="bg-brand text-white w-48 text-center py-1 rounded cursor-pointer border border-brand hover:text-brand hover:bg-white">
@@ -142,15 +148,24 @@ const Main = () => {
         <div
           className="bg-green-800 text-white w-48 h-fit text-center leading-5 py-2 font-semibold rounded cursor-pointer border border-green-800 hover:text-green-800 hover:bg-white"
           onClick={() => {
+            setIsApplyLoading(true);
             ProductTagApi.applyBulkTags({
               products: selectedProducts,
               tags: tags.map((x) => x.value),
-            }).then((res) => {
-              alert(JSON.stringify(res.data));
-            });
+            })
+              .then((res) => {
+                alert(JSON.stringify(res.data));
+              })
+              .catch((err) => {
+                console.error(err);
+                alert(JSON.stringify(err));
+              })
+              .finally(() => {
+                setIsApplyLoading(false);
+              });
           }}
         >
-          Apply
+          {isApplyLoading ? "..." : "Apply"}
         </div>
       </div>
 
