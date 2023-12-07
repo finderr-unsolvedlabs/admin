@@ -1,7 +1,10 @@
 import { AxiosResponse } from "axios";
 import { sendRequest } from ".";
 import { IProductModel } from "../interfaces/common";
-import { IProductUpdateForm } from "../interfaces/forms";
+import {
+  IBulkUpdateProductsForm,
+  IProductUpdateForm,
+} from "../interfaces/forms";
 
 const baseUrl = `/admin/products`;
 
@@ -46,5 +49,13 @@ const update = (
   return sendRequest(`${baseUrl}/${slug}`, { method: "POST", data: form });
 };
 
-const ProductApi = { getProduct, update, list };
+const bulkUpdate = (
+  data: IBulkUpdateProductsForm
+): Promise<
+  AxiosResponse<{ message: string; meta: { modifiedCount: number } }>
+> => {
+  return sendRequest(`${baseUrl}/bulk-update`, { method: "POST", data: data });
+};
+
+const ProductApi = { getProduct, update, list, bulkUpdate };
 export { ProductApi };

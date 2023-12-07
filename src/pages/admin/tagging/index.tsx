@@ -46,6 +46,7 @@ const Main = () => {
   const [products, setProducts] = useState<IProductModel[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [tags, setTags] = useState<TOption[]>([]);
+  const [assignCat, setAssignCat] = useState<TOption | null>(null);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [isApplyLoading, setIsApplyLoading] = useState(false);
 
@@ -182,36 +183,73 @@ const Main = () => {
 
       <Divider className="mb-4" />
 
-      <div className="flex items-end gap-5">
-        <div className="flex-1">
-          <TagsSelectorDropdown
-            isMulti
-            value={tags}
-            onchange={(options) => setTags(options as TOption[])}
-          />
+      <div className="flex flex-col gap-5">
+        <div className="flex items-end gap-5">
+          <div className="flex-1">
+            <TagsSelectorDropdown
+              isMulti
+              value={tags}
+              onchange={(options) => setTags(options as TOption[])}
+            />
+          </div>
+
+          <div
+            className="bg-green-800 text-white w-48 h-fit text-center leading-5 py-2 font-semibold rounded cursor-pointer border border-green-800 hover:text-green-800 hover:bg-white"
+            onClick={() => {
+              setIsApplyLoading(true);
+              ProductTagApi.applyBulkTags({
+                products: selectedProducts,
+                tags: tags.map((x) => x.value),
+              })
+                .then((res) => {
+                  alert(JSON.stringify(res.data));
+                })
+                .catch((err) => {
+                  console.error(err);
+                  alert(JSON.stringify(err));
+                })
+                .finally(() => {
+                  setIsApplyLoading(false);
+                });
+            }}
+          >
+            {isApplyLoading ? "..." : "Apply"}
+          </div>
         </div>
 
-        <div
-          className="bg-green-800 text-white w-48 h-fit text-center leading-5 py-2 font-semibold rounded cursor-pointer border border-green-800 hover:text-green-800 hover:bg-white"
-          onClick={() => {
-            setIsApplyLoading(true);
-            ProductTagApi.applyBulkTags({
-              products: selectedProducts,
-              tags: tags.map((x) => x.value),
-            })
-              .then((res) => {
-                alert(JSON.stringify(res.data));
+        <div className="flex items-end gap-5">
+          <div className="flex-1">
+            <CategorySelector
+              label="Assign Category"
+              value={assignCat}
+              onchange={(option) => setAssignCat(option as TOption)}
+            />
+          </div>
+
+          <div
+            className="bg-green-800 text-white w-48 h-fit text-center leading-5 py-2 font-semibold rounded cursor-pointer border border-green-800 hover:text-green-800 hover:bg-white"
+            onClick={() => {
+              setIsApplyLoading(true);
+              ProductApi.bulkUpdate({
+                products: selectedProducts,
+                category: assignCat?.value,
               })
-              .catch((err) => {
-                console.error(err);
-                alert(JSON.stringify(err));
-              })
-              .finally(() => {
-                setIsApplyLoading(false);
-              });
-          }}
-        >
-          {isApplyLoading ? "..." : "Apply"}
+                .then((res) => {
+                  alert(
+                    `${res.data.meta.modifiedCount}/ ${selectedProducts.length} products updated successfully!`
+                  );
+                })
+                .catch(({ response: { data } }) => {
+                  console.error(data);
+                  alert(JSON.stringify(data));
+                })
+                .finally(() => {
+                  setIsApplyLoading(false);
+                });
+            }}
+          >
+            {isApplyLoading ? "..." : "Apply"}
+          </div>
         </div>
       </div>
 
