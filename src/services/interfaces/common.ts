@@ -20,7 +20,6 @@ export interface IBrandModel {
   _id: string;
   name: string;
   slug: string;
-  state: string;
   logo: IImageModel;
   // stores: IStoreModel[];
   contact: { phone: string };
