@@ -9,7 +9,7 @@ import {
   tablePaginationClasses as classes,
 } from '@mui/base/TablePagination';
 import EditIcon from '@mui/icons-material/Edit';
-import { IconButton } from '@mui/material';
+import { CircularProgress, IconButton } from '@mui/material';
 
 type Props = {};
 
@@ -25,7 +25,9 @@ const Brands = (props: Props) => {
 const Main = (props: Props) => {
   const [brands, setBrands] = useState<IBrandModel[]>([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const getData = async () => {
     BrandApi.list()
@@ -36,14 +38,21 @@ const Main = (props: Props) => {
       .catch((err) => {
         alert(JSON.stringify(err));
       })
+      .finally(() => {
+        setLoading(false);
+      })
   }
   useEffect(() => {
+    setLoading(true);
     getData();
   }, []);
 
+  const filteredBrands = brands.filter((brand) =>
+    brand.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - brands.length) : 0;
+  // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - brands.length) : 0;
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -59,9 +68,28 @@ const Main = (props: Props) => {
     setPage(0);
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPage(0);
+    setSearchTerm(event.target.value);
+  };
+
   return (
-    <Root sx={{ maxWidth: '100%', width: 500 }}>
+    <Root sx={{ margin: 4, maxWidth: '100%', width: 700 }}>
+      <h1 className="text-2xl font-bold">Brands</h1>
       <table aria-label="custom pagination table">
+        <thead>
+          <tr>
+            <th colSpan={4}>
+              <input
+                type="text"
+                className="w-full p-2 border border-gray-300 rounded"
+                placeholder="Search"
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+            </th>
+          </tr>
+        </thead>
         <thead>
           <tr>
             <th>Name</th>
@@ -71,9 +99,10 @@ const Main = (props: Props) => {
           </tr>
         </thead>
         <tbody>
+              { loading ?  <tr><td colSpan={4} style={{textAlign: "center"}}><CircularProgress /></td></tr> : null }
           {(rowsPerPage > 0
-            ? brands.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : brands
+            ? filteredBrands.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            : filteredBrands
             ).map((row) => (
               <tr key={row._id}>
               <td>{row.name}</td>
@@ -88,18 +117,18 @@ const Main = (props: Props) => {
 
             )
             )}
-          {emptyRows > 0 && (
+          {/* {emptyRows > 0 && (
             <tr style={{ height: 41 * emptyRows }}>
               <td colSpan={Object.keys(brands[0]).length + 1} aria-hidden />
             </tr>
-          )}
+          )} */}
         </tbody>
         <tfoot>
           <tr>
             <CustomTablePagination
-              rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+              rowsPerPageOptions={[5, 10, 20, { label: 'All', value: -1 }]}
               colSpan={4}
-              count={brands.length}
+              count={filteredBrands.length}
               rowsPerPage={rowsPerPage}
               page={page}
               slotProps={{
@@ -139,10 +168,11 @@ const Root = styled('div')(
   th {
     border: 1px solid ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
     text-align: left;
-    padding: 8px;
+    padding: 4px;
   }
   th {
     background-color: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+    padding: 8px;
   }
   `,
 );
