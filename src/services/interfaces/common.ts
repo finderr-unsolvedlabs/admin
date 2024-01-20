@@ -95,6 +95,7 @@ export interface IProductModel {
   tags: IProductTagModel[];
   images: IImageModel[];
   original_source?: string;
+  state: "active" | "inactive";
 }
 
 export interface IBasicProduct

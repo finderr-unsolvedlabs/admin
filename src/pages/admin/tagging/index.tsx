@@ -262,23 +262,76 @@ const Main = () => {
             {selectedProducts.length} selected
           </p>
         </div>
-        <div className="flex gap-5 justify-end mb-4">
-          <div
-            className="bg-brand text-white px-4 py-1 rounded cursor-pointer border border-brand hover:text-brand hover:bg-white"
-            onClick={() => {
-              setSelectedProducts(products.map((x) => x.slug));
-            }}
-          >
-            Select All
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex gap-5">
+            <div
+              className="bg-brand text-white px-4 py-1 rounded cursor-pointer border border-brand hover:text-brand hover:bg-white"
+              onClick={() => {
+                setSelectedProducts(products.map((x) => x.slug));
+              }}
+            >
+              Select All
+            </div>
+
+            <div
+              className="bg-brand text-white px-4 py-1 rounded cursor-pointer border border-brand hover:text-brand hover:bg-white"
+              onClick={() => {
+                setSelectedProducts([]);
+              }}
+            >
+              Deselect All
+            </div>
           </div>
 
-          <div
-            className="bg-brand text-white px-4 py-1 rounded cursor-pointer border border-brand hover:text-brand hover:bg-white"
-            onClick={() => {
-              setSelectedProducts([]);
-            }}
-          >
-            Deselect All
+          <div className="flex gap-5">
+            <div
+              className="bg-green-800 text-white px-4 py-1 rounded cursor-pointer border border-green-800 hover:text-green-800 hover:bg-white"
+              onClick={() => {
+                setIsApplyLoading(true);
+                ProductApi.bulkUpdate({
+                  products: selectedProducts,
+                  changeState: "active",
+                })
+                  .then((res) => {
+                    alert(
+                      `${res.data.meta.modifiedCount}/ ${selectedProducts.length} products updated successfully!`
+                    );
+                  })
+                  .catch(({ response: { data } }) => {
+                    console.error(data);
+                    alert(JSON.stringify(data));
+                  })
+                  .finally(() => {
+                    setIsApplyLoading(false);
+                  });
+              }}
+            >
+              {isApplyLoading ? "..." : "Activate Selected"}
+            </div>
+            <div
+              className="bg-red-700 text-white px-4 py-1 rounded cursor-pointer border border-red-700 hover:text-red-700 hover:bg-white"
+              onClick={() => {
+                setIsApplyLoading(true);
+                ProductApi.bulkUpdate({
+                  products: selectedProducts,
+                  changeState: "inactive",
+                })
+                  .then((res) => {
+                    alert(
+                      `${res.data.meta.modifiedCount}/ ${selectedProducts.length} products updated successfully!`
+                    );
+                  })
+                  .catch(({ response: { data } }) => {
+                    console.error(data);
+                    alert(JSON.stringify(data));
+                  })
+                  .finally(() => {
+                    setIsApplyLoading(false);
+                  });
+              }}
+            >
+              {isApplyLoading ? "..." : "Inactivate Selected"}
+            </div>
           </div>
         </div>
 
