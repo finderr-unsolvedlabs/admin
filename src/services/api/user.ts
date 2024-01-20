@@ -1,22 +1,21 @@
-import { sendRequest } from "@/services/api";
-import { AxiosResponse } from "axios";
-import { ILeadModel } from "../interfaces/common";
+import {
+  IBasicProduct,
+  ICartItem,
+  ILeadModel,
+  IUserActionLog,
+  IUserModel,
+} from "../interfaces/common";
 
-const authUrl = `/admin/login`;
-
-export interface ILogInForm {
-  username: string;
-  password: string;
+export interface IUserDetails extends IUserModel {
+  leads: ILeadModel[];
+  recentlyViewedProducts: IBasicProduct[];
+  cartItems: ICartItem[];
+  recentActivities: IUserActionLog[];
 }
 
-const logIn = (
-  props: ILogInForm
-): Promise<AxiosResponse<{ token: string }>> => {
-  return sendRequest(authUrl, {
-    method: "post",
-    data: props,
-  });
-};
+// const list = () => {};
 
-const UserApi = { logIn };
+const getUser = () => {};
+
+const UserApi = {};
 export { UserApi };

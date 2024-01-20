@@ -1,4 +1,33 @@
+import {
+  ClothSizes,
+  LeadTypes,
+  USER_ACTION_TYPES,
+} from "@/utils/constants/common";
 import { AlertColor } from "@mui/material";
+
+// utilities
+export type TOption = {
+  label: string;
+  value: string;
+};
+
+export type TSelectorOptions = null | TOption | TOption[];
+
+export type TAlerts = {
+  title: string;
+  description: string;
+  type: AlertColor;
+};
+
+export interface ITimeStamp {
+  createdAt: string;
+  updatedAt: string;
+}
+
+// generated form constants
+export type ILeadTypes = (typeof LeadTypes)[number];
+export type TSizes = (typeof ClothSizes)[number];
+export type TUserActionTypes = (typeof USER_ACTION_TYPES)[number];
 
 // Interfaces of models
 export interface IImageModel {
@@ -58,27 +87,44 @@ export interface IProductModel {
   slug: string;
   name: string;
   price: number;
-  description: string;
-  stores: IStoreModel[];
+  description?: string;
   relevance: number;
   brand: IBrandModel;
   category: ICategoryModel;
   tags: IProductTagModel[];
   images: IImageModel[];
+  original_source?: string;
 }
 
-export interface IUserModel {
+export interface IBasicProduct
+  extends Pick<
+    IProductModel,
+    "_id" | "name" | "price" | "slug" | "original_source"
+  > {
+  image: string;
+  brand_name: string;
+}
+export interface IWishlistItem extends IBasicProduct {}
+
+export interface ICartItem extends IBasicProduct {
+  checkout_type: ILeadTypes;
+}
+
+export interface IUserModel extends ITimeStamp {
   _id: string;
   user_name: string;
   name?: string;
   mobile?: string;
   email?: string;
+  wishlist?: IWishlistItem[];
 }
 
 export interface ILeadModel {
   _id: string;
-  product: IProductModel;
+  products: IBasicProduct[];
+  lead_type: ILeadTypes;
   user: IUserModel;
+  size?: TSizes;
   createdAt: string;
 }
 
@@ -107,16 +153,9 @@ export interface IOfferModel extends IBaseInfo {
   slug: string;
   brand?: IBrandModel;
 }
-// utilities
-export type TOption = {
-  label: string;
-  value: string;
-};
 
-export type TSelectorOptions = null | TOption | TOption[];
-
-export type TAlerts = {
-  title: string;
-  description: string;
-  type: AlertColor;
-};
+export interface IUserActionLog extends ITimeStamp {
+  action_type: TUserActionTypes;
+  message?: string;
+  user: IUserModel;
+}

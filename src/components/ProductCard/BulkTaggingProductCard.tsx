@@ -4,6 +4,7 @@ import randomColor from "randomcolor";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import Link from "next/link";
+import Image from "next/image";
 
 type Props = {
   product: IProductModel;
@@ -34,10 +35,12 @@ const BulkTaggingProductCard = ({
             onMediaClick(product.slug);
           }}
         >
-          <CardMedia
-            sx={{ height: 250 }}
-            image={product.images[0].url}
-            title={product.images[0].slug}
+          <Image
+            src={product.images[0].url}
+            alt={product.images[0].slug}
+            width={250}
+            height={250}
+            layout="responsive"
           />
         </div>
         <CardContent>

@@ -1,4 +1,4 @@
-import { ILogInForm, UserApi } from "@/services/api/user";
+import { ILogInForm, AdminUserApi } from "@/services/api/adminUser";
 import { setUserLoggedIn } from "@/store/userSlice";
 import { ADMIN_TOKEN } from "@/utils/constants/cookiesName";
 import { useFormik } from "formik";
@@ -16,7 +16,7 @@ export default function Home({}) {
     onSubmit: (data) => {
       console.log(`sending request to backend`);
       if (data.password && data.username) {
-        UserApi.logIn({
+        AdminUserApi.logIn({
           password: data.password,
           username: data.username,
         }).then((response) => {
