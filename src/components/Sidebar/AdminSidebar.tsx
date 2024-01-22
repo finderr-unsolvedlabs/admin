@@ -37,7 +37,7 @@ const AdminSidebar = (props: Props) => {
         <MenuIcon style={{ color: 'black' }} fontSize="large" />
     </IconButton>
     <Drawer anchor="left" open={isVisible} onClose={handleSidebarClick}>
-    <div className="flex flex-col w- gap-4">
+    <div className="flex flex-col w-96 gap-4">
       <div className="mx-auto">
         <img
           className="w-28 h-28"
