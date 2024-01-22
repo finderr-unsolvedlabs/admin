@@ -3,7 +3,7 @@ import { startCase } from "lodash";
 import Link from "next/link";
 import React from "react";
 
-const routes = ["home", "brands", "products"];
+const routes = ["home", "brands", "products", "users"];
 
 type Props = {};
 

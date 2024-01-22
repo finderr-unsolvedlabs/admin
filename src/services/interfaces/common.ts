@@ -21,7 +21,7 @@ export type TAlerts = {
 
 export interface ITimeStamp {
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
 }
 
 // generated form constants
@@ -92,6 +92,7 @@ export interface IProductModel {
   relevance: number;
   brand: IBrandModel;
   category: ICategoryModel;
+  scraped_slug: string;
   tags: IProductTagModel[];
   images: IImageModel[];
   original_source?: string;
@@ -117,7 +118,7 @@ export interface IUserModel extends ITimeStamp {
   name?: string;
   mobile?: string;
   email?: string;
-  wishlist?: IWishlistItem[];
+  wishlist?: IBasicProduct[];
 }
 
 export interface ILeadModel {
@@ -158,5 +159,5 @@ export interface IOfferModel extends IBaseInfo {
 export interface IUserActionLog extends ITimeStamp {
   action_type: TUserActionTypes;
   message?: string;
-  user: IUserModel;
+  // user: IUserModel;
 }
