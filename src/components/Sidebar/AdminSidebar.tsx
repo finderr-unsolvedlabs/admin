@@ -8,6 +8,7 @@ const routes = [
   { name: "brands", path: "/admin/brands" },
   { name: "products", path: "/admin/products" },
   { name: "tagging", path: "/admin/taggings" },
+  { name: "users", path: "/admin/users" },
 ];
 
 type Props = {};
