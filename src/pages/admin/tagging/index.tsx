@@ -5,6 +5,7 @@ import { IProductModel, TOption } from "@/services/interfaces/common";
 import { CategorySelector } from "@/components/selectors/CategorySelector";
 import { BrandSelector } from "@/components/selectors/BrandSelector";
 import { useFormik } from "formik";
+import Select from "react-select";
 import {
   ProductApi,
   TProductSearchParams,
@@ -25,12 +26,18 @@ type TInitialValeSearch = {
   search_query_from?: TSearchQueryOptions[];
   tags?: TOption[];
   excluded_tags?: TOption[];
+  states?: TOption[];
 };
 
 const availableSearchOptions: TSearchQueryOptions[] = [
   "name",
   "scraped_slug",
   "description",
+];
+
+const availableStates: TOption[] = [
+  { label: "Active", value: "active" },
+  { label: "Inactive", value: "inactive" },
 ];
 
 const Tagging = (props: Props) => {
@@ -51,7 +58,8 @@ const Main = () => {
   const [isApplyLoading, setIsApplyLoading] = useState(false);
 
   const initialValeSearch: TInitialValeSearch = {
-    search_query_from: ["name", "scraped_slug"],
+    search_query_from: ["name"],
+    states: [availableStates[0]],
   };
 
   const queryForm = useFormik({
@@ -65,6 +73,7 @@ const Main = () => {
         brands: values.brands?.map((x) => x.value),
         tags: values.tags?.map((x) => x.value),
         excluded_tags: values.excluded_tags?.map((x) => x.value),
+        states: values.states?.map((x) => x.value),
       };
       ProductApi.list(params)
         .then(({ data: { data } }) => {
@@ -179,6 +188,19 @@ const Main = () => {
           isMulti
           onchange={(options) => queryForm.setFieldValue("brands", options)}
         />
+
+        <div>
+          <p className="font-medium mb-2">Select State</p>
+          <Select
+            options={availableStates}
+            value={queryForm.values.states}
+            isMulti
+            onChange={(options) => {
+              const _options = options as TOption | TOption[] | null;
+              queryForm.setFieldValue("states", _options);
+            }}
+          />
+        </div>
       </div>
 
       <Divider className="mb-4" />
@@ -262,23 +284,76 @@ const Main = () => {
             {selectedProducts.length} selected
           </p>
         </div>
-        <div className="flex gap-5 justify-end mb-4">
-          <div
-            className="bg-brand text-white px-4 py-1 rounded cursor-pointer border border-brand hover:text-brand hover:bg-white"
-            onClick={() => {
-              setSelectedProducts(products.map((x) => x.slug));
-            }}
-          >
-            Select All
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex gap-5">
+            <div
+              className="bg-brand text-white px-4 py-1 rounded cursor-pointer border border-brand hover:text-brand hover:bg-white"
+              onClick={() => {
+                setSelectedProducts(products.map((x) => x.slug));
+              }}
+            >
+              Select All
+            </div>
+
+            <div
+              className="bg-brand text-white px-4 py-1 rounded cursor-pointer border border-brand hover:text-brand hover:bg-white"
+              onClick={() => {
+                setSelectedProducts([]);
+              }}
+            >
+              Deselect All
+            </div>
           </div>
 
-          <div
-            className="bg-brand text-white px-4 py-1 rounded cursor-pointer border border-brand hover:text-brand hover:bg-white"
-            onClick={() => {
-              setSelectedProducts([]);
-            }}
-          >
-            Deselect All
+          <div className="flex gap-5">
+            <div
+              className="bg-green-800 text-white px-4 py-1 rounded cursor-pointer border border-green-800 hover:text-green-800 hover:bg-white"
+              onClick={() => {
+                setIsApplyLoading(true);
+                ProductApi.bulkUpdate({
+                  products: selectedProducts,
+                  changeState: "active",
+                })
+                  .then((res) => {
+                    alert(
+                      `${res.data.meta.modifiedCount}/ ${selectedProducts.length} products updated successfully!`
+                    );
+                  })
+                  .catch(({ response: { data } }) => {
+                    console.error(data);
+                    alert(JSON.stringify(data));
+                  })
+                  .finally(() => {
+                    setIsApplyLoading(false);
+                  });
+              }}
+            >
+              {isApplyLoading ? "..." : "Activate Selected"}
+            </div>
+            <div
+              className="bg-red-700 text-white px-4 py-1 rounded cursor-pointer border border-red-700 hover:text-red-700 hover:bg-white"
+              onClick={() => {
+                setIsApplyLoading(true);
+                ProductApi.bulkUpdate({
+                  products: selectedProducts,
+                  changeState: "inactive",
+                })
+                  .then((res) => {
+                    alert(
+                      `${res.data.meta.modifiedCount}/ ${selectedProducts.length} products updated successfully!`
+                    );
+                  })
+                  .catch(({ response: { data } }) => {
+                    console.error(data);
+                    alert(JSON.stringify(data));
+                  })
+                  .finally(() => {
+                    setIsApplyLoading(false);
+                  });
+              }}
+            >
+              {isApplyLoading ? "..." : "Inactivate Selected"}
+            </div>
           </div>
         </div>
 

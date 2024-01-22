@@ -5,6 +5,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import Link from "next/link";
 import Image from "next/image";
+import { startCase } from "lodash";
 
 type Props = {
   product: IProductModel;
@@ -28,6 +29,15 @@ const BulkTaggingProductCard = ({
       >
         <TaskAltIcon sx={{ fontSize: 50, color: "#fff" }} />
       </div>
+
+      <div
+        className={`absolute text-white right-0 p-2 bg-gray-600 bg-opacity-75 ${
+          product.state == "active" ? "hidden" : ""
+        }`}
+      >
+        {startCase(product.state)}
+      </div>
+
       <Card sx={{ maxWidth: 345 }} key={product.slug}>
         <div
           className="cursor-pointer"

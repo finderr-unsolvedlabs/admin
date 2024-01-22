@@ -3,7 +3,12 @@ import { startCase } from "lodash";
 import Link from "next/link";
 import React from "react";
 
-const routes = ["home", "brands", "products", "users"];
+const routes = [
+  { name: "home", path: "/admin" },
+  { name: "brands", path: "/admin/brands" },
+  { name: "products", path: "/admin/products" },
+  { name: "tagging", path: "/admin/taggings" },
+];
 
 type Props = {};
 
@@ -21,10 +26,10 @@ const AdminSidebar = (props: Props) => {
         return (
           <div
             className="text-slate-800 text-lg font-medium p-2 border-b-2"
-            key={route}
+            key={route.name}
           >
-            <Link href={route}>
-              <div>{startCase(route)}</div>
+            <Link href={route.path}>
+              <div>{startCase(route.name)}</div>
             </Link>
           </div>
         );
