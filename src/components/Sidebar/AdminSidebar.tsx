@@ -1,7 +1,10 @@
 "use client";
+import { Drawer, IconButton } from "@mui/material";
+import MenuIcon from '@mui/icons-material/Menu';
 import { startCase } from "lodash";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
 
 const routes = [
   { name: "home", path: "/admin" },
@@ -13,8 +16,28 @@ const routes = [
 type Props = {};
 
 const AdminSidebar = (props: Props) => {
+
+  const router = useRouter();
+  const [isVisible,setVisible] = React.useState(true);
+
+  useEffect(() => {
+    if (isVisible) {
+      setVisible(false);
+    }
+  }, [router.asPath]);
+
+
+  const handleSidebarClick = () => {
+    setVisible(!isVisible);
+  }
+
   return (
-    <div className="flex flex-col gap-4">
+    <>
+    <IconButton onClick={handleSidebarClick}>
+        <MenuIcon style={{ color: 'black' }} fontSize="large" />
+    </IconButton>
+    <Drawer anchor="left" open={isVisible} onClose={handleSidebarClick}>
+    <div className="flex flex-col w- gap-4">
       <div className="mx-auto">
         <img
           className="w-28 h-28"
@@ -35,6 +58,8 @@ const AdminSidebar = (props: Props) => {
         );
       })}
     </div>
+    </Drawer>
+    </>
   );
 };
 
