@@ -5,6 +5,7 @@ import { IProductModel, TOption } from "@/services/interfaces/common";
 import { CategorySelector } from "@/components/selectors/CategorySelector";
 import { BrandSelector } from "@/components/selectors/BrandSelector";
 import { useFormik } from "formik";
+import Select from "react-select";
 import {
   ProductApi,
   TProductSearchParams,
@@ -25,12 +26,18 @@ type TInitialValeSearch = {
   search_query_from?: TSearchQueryOptions[];
   tags?: TOption[];
   excluded_tags?: TOption[];
+  states?: TOption[];
 };
 
 const availableSearchOptions: TSearchQueryOptions[] = [
   "name",
   "scraped_slug",
   "description",
+];
+
+const availableStates: TOption[] = [
+  { label: "Active", value: "active" },
+  { label: "Inactive", value: "inactive" },
 ];
 
 const Tagging = (props: Props) => {
@@ -51,7 +58,8 @@ const Main = () => {
   const [isApplyLoading, setIsApplyLoading] = useState(false);
 
   const initialValeSearch: TInitialValeSearch = {
-    search_query_from: ["name", "scraped_slug"],
+    search_query_from: ["name"],
+    states: [availableStates[0]],
   };
 
   const queryForm = useFormik({
@@ -65,6 +73,7 @@ const Main = () => {
         brands: values.brands?.map((x) => x.value),
         tags: values.tags?.map((x) => x.value),
         excluded_tags: values.excluded_tags?.map((x) => x.value),
+        states: values.states?.map((x) => x.value),
       };
       ProductApi.list(params)
         .then(({ data: { data } }) => {
@@ -179,6 +188,19 @@ const Main = () => {
           isMulti
           onchange={(options) => queryForm.setFieldValue("brands", options)}
         />
+
+        <div>
+          <p className="font-medium mb-2">Select State</p>
+          <Select
+            options={availableStates}
+            value={queryForm.values.states}
+            isMulti
+            onChange={(options) => {
+              const _options = options as TOption | TOption[] | null;
+              queryForm.setFieldValue("states", _options);
+            }}
+          />
+        </div>
       </div>
 
       <Divider className="mb-4" />

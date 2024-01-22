@@ -24,6 +24,7 @@ export interface TProductSearchParams {
   search_query_from?: TSearchQueryOptions[];
   tags?: string[];
   excluded_tags?: string[];
+  states?: string[];
 }
 
 const list = (
