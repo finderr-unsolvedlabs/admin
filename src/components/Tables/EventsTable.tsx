@@ -8,8 +8,8 @@ type Props = {
   demoData: IEvent[];
 };
 
-const SalesTable = ({ title, demoData }: Props) => {
-  const itemsPerPage = 5;
+const EventsTable = ({ title, demoData }: Props) => {
+  const itemsPerPage = 10;
   const [totalPages, setTotalPages] = useState(
     Math.ceil(demoData.length / itemsPerPage)
   );
@@ -50,7 +50,7 @@ const SalesTable = ({ title, demoData }: Props) => {
         <h3 className="mb-4 text-xl font-semibold">{title}</h3>
         <div className="relative overflow-x-auto">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            <thead className="text-xs text-gray-700 border uppercase bg-gray-50">
               <tr>
                 <th scope="col" className="px-6 py-3">
                   Title
@@ -59,10 +59,13 @@ const SalesTable = ({ title, demoData }: Props) => {
                   Link Label
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Link
+                  Expiry Date
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Expiry Date
+                  Category
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Link
                 </th>
               </tr>
             </thead>
@@ -72,20 +75,23 @@ const SalesTable = ({ title, demoData }: Props) => {
                   <tr className="bg-white border" key={index}>
                     <td
                       scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                      className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap"
                     >
                       {event.title}
                     </td>
-                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
                       {event.action.label}
                     </td>
-                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
+                      20-10-2023
+                    </td>
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
+                      Event
+                    </td>
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
                       <IconButton href={event.action.url} target="_blank">
                         <LaunchIcon style={{ color: "black" }} />
                       </IconButton>
-                    </td>
-                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                      20-10-2023
                     </td>
                   </tr>
                 );
@@ -159,4 +165,4 @@ const SalesTable = ({ title, demoData }: Props) => {
   );
 };
 
-export default SalesTable;
+export default EventsTable;
