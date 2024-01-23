@@ -60,7 +60,7 @@ const Main = () => {
           </div>
           <div className="mt-5 w-1/4">
             <label className="block mb-2 text-sm font-medium text-gray-900">
-              Select an option*
+              Category*
             </label>
             <select
               id="post_type"
