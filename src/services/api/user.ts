@@ -35,7 +35,9 @@ const list = (props: IPaginateQueryBase): AxiosPromise<IUserListResponse> => {
   });
 };
 
-const getUser = () => {};
+const getUser = (id: string): AxiosPromise<IUserDetails> => {
+  return sendRequest(`${baseUrl}/${id}`);
+};
 
-const UserApi = { list };
+const UserApi = { list, getUser };
 export { UserApi };

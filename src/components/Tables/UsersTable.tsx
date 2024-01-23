@@ -77,7 +77,7 @@ const UsersTable = ({ userList }: Props) => {
                   </td>
                   <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                     <a
-                      href={`/admin/users/${user.user_name}`}
+                      href={`/admin/users/${user._id}`}
                       target="_blank"
                       rel="noreferrer"
                     >
