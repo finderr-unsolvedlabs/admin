@@ -58,7 +58,22 @@ const Main = () => {
               required
             />
           </div>
-          <div className="mt-5 w-full">
+          <div className="mt-5 w-1/4">
+            <label className="block mb-2 text-sm font-medium text-gray-900">
+              Select an option*
+            </label>
+            <select
+              id="post_type"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              required
+            >
+              <option selected value="event">
+                Event
+              </option>
+              <option value="offer">Offer</option>
+            </select>
+          </div>
+          <div className="mt-5 w-1/4">
             <label className="block mb-2 text-sm font-medium text-gray-900">
               Expiry Date*
             </label>
