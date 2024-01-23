@@ -24,6 +24,18 @@ export interface ITimeStamp {
   updatedAt?: string;
 }
 
+export interface IPaginatedResultBase {
+  data: any[];
+  pagination: {
+    total: number;
+  };
+}
+
+export interface IPaginateQueryBase {
+  page?: number;
+  limit?: number;
+}
+
 // generated form constants
 export type ILeadTypes = (typeof LeadTypes)[number];
 export type TSizes = (typeof ClothSizes)[number];
@@ -51,22 +63,9 @@ export interface IBrandModel {
   slug: string;
   state: string;
   logo: IImageModel;
-  // stores: IStoreModel[];
   contact: { phone: string };
   description: string | null;
   cover_images: IImageModel[];
-}
-
-export interface IStoreModel {
-  _id: string;
-  name: string;
-  slug: string;
-  address: {
-    google_map_link: string;
-    address: string;
-  };
-  images: IImageModel[];
-  brand: IBrandModel;
 }
 
 export interface ICategoryModel {
