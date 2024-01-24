@@ -7,10 +7,14 @@ import { useRouter } from "next/router";
 import { FullPageLoader } from "@/components/Loaders/FullPageLoader";
 
 const ProfileHeading = ({ title }: { title: string }) => {
-  return <div className="text-sm text-gray-900">{title}</div>;
+  return <div className="mb-3 text-sm text-gray-900">{title}</div>;
 };
 const ProfileData = ({ data }: { data: string }) => {
-  return <div className="mb-3 text-md font-semibold text-gray-900">{data}</div>;
+  return (
+    <div className="mb-3 text-sm font-semibold text-gray-900">
+      {data === "" ? "undefined" : data}
+    </div>
+  );
 };
 
 const User = () => {
@@ -48,22 +52,18 @@ const User = () => {
               <h3 className="mb-4 text-xl font-bold text-gray-900">
                 {user_id}
               </h3>
-              <div className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4">
-                <div className="grid grid-cols-2">
+              <div className="items-center w-full sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4 overflow-hidden">
+                <div className="grid grid-cols-2 w-full">
                   <ProfileHeading title="Name" />
                   <ProfileData data={userData.name || ""} />
                   <ProfileHeading title="Email Address" />
                   <ProfileData data={userData.email || ""} />
                   <ProfileHeading title="Phone Number" />
                   <ProfileData data={userData.mobile || ""} />
-                  <ProfileHeading title="Created At" />
-                  <ProfileData data={userData.createdAt || ""} />
-                  <ProfileHeading title="Updated At" />
-                  <ProfileData data={userData.updatedAt || ""} />
                 </div>
               </div>
             </div>
-            <LogsTable demoUser={userData} />
+            <LogsTable userDetails={userData} />
             {/* <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 sm:p-6">
               <div className="items-center">
                 <h3 className="mb-4 text-xl font-bold text-gray-900">
@@ -119,7 +119,18 @@ const User = () => {
             </div> */}
           </div>
           <div className="col-span-2">
-            <CartProducts demoUser={userData} />
+            {userData.cart === null ? (
+              <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 sm:p-6">
+                <div className="items-center">
+                  <h3 className="mb-4 text-xl font-bold text-gray-900">Cart</h3>
+                  <div className="text-center">
+                    <p className="text-gray-500">No items in cart</p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <CartProducts userDetails={userData} />
+            )}
             <RecentViewedProducts
               products={userData.recentlyViewedProducts}
               title="Recently Viewed Products"

@@ -108,7 +108,13 @@ export interface IBasicProduct
 }
 export interface IWishlistItem extends IBasicProduct {}
 
+export interface ICart extends ITimeStamp {
+  user: string;
+  products: ICartItem[];
+}
+
 export interface ICartItem extends IBasicProduct {
+  _id: string;
   checkout_type: ILeadTypes;
 }
 

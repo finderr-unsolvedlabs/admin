@@ -93,7 +93,7 @@ const UsersTable = ({ userList }: Props) => {
           <span className="text-sm text-gray-700">
             {"Showing "}
             <span className="font-semibold text-gray-900">
-              {(page - 1) * itemsPerPage}
+              {Math.max((page - 1) * itemsPerPage, 1)}
             </span>{" "}
             to{" "}
             <span className="font-semibold text-gray-900">

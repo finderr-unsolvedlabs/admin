@@ -2,6 +2,7 @@ import { AxiosPromise } from "axios";
 import { sendRequest } from ".";
 import {
   IBasicProduct,
+  ICart,
   ICartItem,
   ILeadModel,
   IPaginateQueryBase,
@@ -15,7 +16,7 @@ const baseUrl = `/admin/users`;
 export interface IUserDetails extends IUserModel {
   leads: ILeadModel[];
   recentlyViewedProducts: IBasicProduct[];
-  cartItems: ICartItem[];
+  cart: ICart;
   recentActivities: IUserActionLog[];
 }
 
