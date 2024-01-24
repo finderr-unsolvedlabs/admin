@@ -21,7 +21,19 @@ export type TAlerts = {
 
 export interface ITimeStamp {
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
+}
+
+export interface IPaginatedResultBase {
+  data: any[];
+  pagination: {
+    total: number;
+  };
+}
+
+export interface IPaginateQueryBase {
+  page?: number;
+  limit?: number;
 }
 
 // generated form constants
@@ -51,22 +63,9 @@ export interface IBrandModel {
   slug: string;
   state: string;
   logo: IImageModel;
-  // stores: IStoreModel[];
   contact: { phone: string };
   description: string | null;
   cover_images: IImageModel[];
-}
-
-export interface IStoreModel {
-  _id: string;
-  name: string;
-  slug: string;
-  address: {
-    google_map_link: string;
-    address: string;
-  };
-  images: IImageModel[];
-  brand: IBrandModel;
 }
 
 export interface ICategoryModel {
@@ -92,6 +91,7 @@ export interface IProductModel {
   relevance: number;
   brand: IBrandModel;
   category: ICategoryModel;
+  scraped_slug: string;
   tags: IProductTagModel[];
   images: IImageModel[];
   original_source?: string;
@@ -108,7 +108,13 @@ export interface IBasicProduct
 }
 export interface IWishlistItem extends IBasicProduct {}
 
+export interface ICart extends ITimeStamp {
+  user: string;
+  products: ICartItem[];
+}
+
 export interface ICartItem extends IBasicProduct {
+  _id: string;
   checkout_type: ILeadTypes;
 }
 
@@ -118,7 +124,7 @@ export interface IUserModel extends ITimeStamp {
   name?: string;
   mobile?: string;
   email?: string;
-  wishlist?: IWishlistItem[];
+  wishlist?: IBasicProduct[];
 }
 
 export interface ILeadModel {
@@ -173,5 +179,5 @@ export interface IOfferModel extends IBaseInfo {
 export interface IUserActionLog extends ITimeStamp {
   action_type: TUserActionTypes;
   message?: string;
-  user: IUserModel;
+  // user: IUserModel;
 }
