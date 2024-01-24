@@ -147,8 +147,22 @@ export interface IBaseInfo {
 
 export interface INotification extends IBaseInfo {}
 
+export interface IEventListResponse {
+  data: IEvent[];
+  pagination: {
+    total: number;
+  };
+}
+
 export interface IEvent extends IBaseInfo {
   slug: string;
+}
+
+export interface IOfferListResponse {
+  data: IOfferModel[];
+  pagination: {
+    total: number;
+  };
 }
 
 export interface IOfferModel extends IBaseInfo {
