@@ -7,7 +7,8 @@ const routes = [
   { name: "home", path: "/admin" },
   { name: "brands", path: "/admin/brands" },
   { name: "products", path: "/admin/products" },
-  { name: "tagging", path: "/admin/taggings" },
+  { name: "tagging", path: "/admin/tagging" },
+  { name: "users", path: "/admin/users" },
 ];
 
 type Props = {};
