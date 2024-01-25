@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React from "react";
 import LaunchIcon from "@mui/icons-material/Launch";
 import {
   IEventListResponse,
@@ -39,17 +39,17 @@ const EventsTable = ({ title, eventsData }: Props) => {
           <table className="w-full text-sm text-left rtl:text-right text-gray-500">
             <thead className="text-xs text-gray-700 border uppercase bg-gray-50">
               <tr>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-4 py-3">
                   Title
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-4 py-3">
                   Link Label
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-4 py-3">
                   Expiry Date
                 </th>
-                <th scope="col" className="px-6 py-3">
-                  Link
+                <th scope="col" className="px-4 py-3">
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -70,9 +70,23 @@ const EventsTable = ({ title, eventsData }: Props) => {
                       20-10-2023
                     </td>
                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
-                      <IconButton href={event.action.url} target="_blank">
-                        <LaunchIcon style={{ color: "black" }} />
-                      </IconButton>
+                      <div className="flex items-center space-x-4">
+                        <a
+                          href="#"
+                          className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                        >
+                          Edit
+                        </a>
+                        <a
+                          href="#"
+                          className="font-medium text-red-600 dark:text-red-500 hover:underline"
+                        >
+                          Remove
+                        </a>
+                        <IconButton href={event.action.url} target="_blank">
+                          <LaunchIcon style={{ color: "black" }} />
+                        </IconButton>
+                      </div>
                     </td>
                   </tr>
                 );
