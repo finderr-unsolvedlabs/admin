@@ -1,166 +1,154 @@
 import { SidebarLayout } from "@/components/Layout/SidebarLayout";
+import { SidebarsMainLoader } from "@/components/Loaders/SidebarsMainLoader";
 import { AdminSidebar } from "@/components/Sidebar/AdminSidebar";
+import { BrandApi } from "@/services/api/brand";
+import { IBrandModel } from "@/services/interfaces/common";
 // import { EventsApi } from "@/services/api/events";
 // import { ICreateEventForm } from "@/services/interfaces/forms";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const Edit = () => {
+  const router = useRouter();
+  const brand_slug = router.query.slug as string;
+  const [brandData, setBrandData] = useState<IBrandModel>();
+  useEffect(() => {
+    BrandApi.list().then(({ data }) => {
+      const reqData = data.filter((brand) => brand.slug === brand_slug);
+      console.log(reqData);
+      if (reqData.length > 0) setBrandData(reqData[0]);
+    });
+  }, [brand_slug]);
+
   return (
     <SidebarLayout
-      MainComponent={<Main />}
+      MainComponent={
+        brandData ? <Main brandData={brandData} /> : <SidebarsMainLoader />
+      }
       SidebarComponent={<AdminSidebar />}
     />
   );
 };
 
-export const emptyFormData = {
-  title: "",
-  imageKey: "",
-  expiry_date: "",
-  action: {
-    label: "",
-    url: "",
-  },
+type Props = {
+  brandData: IBrandModel;
 };
 
-const Main = () => {
+const Main = ({ brandData }: Props) => {
   const router = useRouter();
 
-  const [formData, setFormData] = React.useState(emptyFormData);
+  const [formData, setFormData] = React.useState(brandData);
 
   const submitHandler = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const dateParts = formData.expiry_date.split("-");
-    const expiry_date_formatted = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-    formData.expiry_date = expiry_date_formatted;
+    if (formData === brandData) {
+      alert("No changes made");
+      return;
+    }
 
-    // EventsApi.createEvent(formData)
-    //   .then(({ data }) => {
-    //     alert("Event Created Successfully");
-    //     router.push("/admin/events");
-    //   })
-    //   .catch((error) => {
-    //     alert("Something went wrong!");
-    //     console.error(error);
-    //   });
+    BrandApi.editBrand(brandData._id, formData)
+      .then(({ data }) => {
+        alert("Brand Updated Successfully");
+        router.push("/admin/brands");
+      })
+      .catch((error) => {
+        alert("Something went wrong!");
+        console.error(error);
+      });
   };
 
   return (
     <div className="flex flex-col gap-2 p-4 w-full h-full">
-      <h1 className="text-2xl font-semibold">Add New Event</h1>
+      <h1 className="text-2xl font-semibold">Edit Brand Details</h1>
       <form onSubmit={submitHandler}>
-        <div className="flex justify-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <div className="mt-5 w-full">
             <label className="block mb-2 text-sm font-medium text-gray-900">
-              Title*
+              Brand Name*
             </label>
             <input
-              id="e_title"
+              id="brand_name"
               type="text"
+              value={formData?.name}
               onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
+                setFormData({ ...formData, name: e.target.value })
               }
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="Title"
               required
             />
           </div>
-          <div className="mt-5 w-1/3">
+          <div className="mt-5 w-1/2">
             <label className="block mb-2 text-sm font-medium text-gray-900">
-              Expiry Date*
+              State*
             </label>
-            <input
-              id="expiry_date"
-              type="date"
-              onChange={(e) =>
-                setFormData({ ...formData, expiry_date: e.target.value })
-              }
-              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              placeholder="Select date"
-              required
-            />
+            <div className="flex items-center gap-2">
+              <div className="flex items-center">
+                <input
+                  checked={formData.state === "active" ? true : false}
+                  onClick={() => setFormData({ ...formData, state: "active" })}
+                  id="state_active"
+                  type="radio"
+                  value="active"
+                  name="state"
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:outline-none"
+                />
+                <label className="ms-2 text-sm font-medium text-gray-900">
+                  Active
+                </label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  checked={formData.state === "inactive" ? true : false}
+                  onClick={() =>
+                    setFormData({ ...formData, state: "inactive" })
+                  }
+                  id="state_inactive"
+                  type="radio"
+                  value="inactive"
+                  name="state"
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:outline-none"
+                />
+                <label className="ms-2 text-sm font-medium text-gray-900">
+                  Inactive
+                </label>
+              </div>
+            </div>
           </div>
         </div>
         <div className="flex justify-center gap-2">
           <div className="mt-5 w-full">
             <label className="block mb-2 text-sm font-medium text-gray-900">
-              Url Label*
+              Contact Number*
             </label>
             <input
-              id="url_label"
+              id="contact_number"
               type="text"
+              value={formData?.contact?.phone ?? ""}
               onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  action: { label: e.target.value, url: formData.action.url },
-                })
-              }
-              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              placeholder="Link Label"
-              required
-            />
-          </div>
-          <div className="mt-5 w-full">
-            <label className="block mb-2 text-sm font-medium text-gray-900">
-              Url*
-            </label>
-            <input
-              id="url"
-              type="text"
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  action: { url: e.target.value, label: formData.action.label },
-                })
-              }
-              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              placeholder="Url"
-              required
-            />
-          </div>
-        </div>
-        <div className="flex justify-center gap-2">
-          <div className="mt-5 w-full">
-            <label className="block mb-2 text-sm font-medium text-gray-900">
-              Image S3 Key*
-            </label>
-            <input
-              id="image_s3_key"
-              type="text"
-              onChange={(e) =>
-                setFormData({ ...formData, imageKey: e.target.value })
+                setFormData({ ...formData, contact: { phone: e.target.value } })
               }
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="image s3 key"
               required
             />
           </div>
-          <div className="mt-5 w-full">
-            <label className="block mb-2 text-sm font-medium text-gray-900">
-              Logo S3 Key
-            </label>
-            <input
-              id="logo_s3_key"
-              type="text"
-              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              placeholder="logo s3 key (optional)"
-            />
-          </div>
         </div>
         <div className="mt-5">
           <label className="block mb-2 text-sm font-medium text-gray-900">
-            Description
+            Description*
           </label>
           <textarea
             id="desc"
-            rows={4}
-            // onChange={(e) =>
-            //   setFormData({ ...formData, description: e.target.value })
-            // }
+            rows={5}
+            value={formData?.description ?? ""}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
             placeholder="Description (optional)"
             className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            required
           />
         </div>
         <div className="flex justify-center mt-5">
@@ -168,7 +156,7 @@ const Main = () => {
             type="submit"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
           >
-            Submit
+            Update
           </button>
         </div>
       </form>

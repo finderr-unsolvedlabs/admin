@@ -3,19 +3,16 @@ import { SidebarsMainLoader } from "@/components/Loaders/SidebarsMainLoader";
 import { AdminSidebar } from "@/components/Sidebar/AdminSidebar";
 import { BrandApi } from "@/services/api/brand";
 import { IBrandModel } from "@/services/interfaces/common";
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 const Brands = () => {
-  const router = useRouter();
-  const page = parseInt(router.query.page as string) || 1;
   const [brandsList, setBrandList] = useState<IBrandModel[]>([]);
   useEffect(() => {
     setBrandList([]);
     BrandApi.list().then(({ data }) => {
       setBrandList(data);
     });
-  }, [page]);
+  }, []);
 
   return (
     <SidebarLayout
@@ -74,7 +71,7 @@ const Main = ({ brandsList }: Props) => {
               <th colSpan={4}>
                 <input
                   type="text"
-                  className="w-full p-2"
+                  className="w-full p-2 focus:outline-none"
                   placeholder="Search"
                   value={searchTerm}
                   onChange={handleSearchChange}
