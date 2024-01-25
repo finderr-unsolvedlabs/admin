@@ -18,7 +18,6 @@ export const emptyFormData: ICreateOfferForm = {
   title: "",
   imageKey: "",
   expiry_date: "",
-  brand_id: "",
   action: {
     label: "",
     url: "",
