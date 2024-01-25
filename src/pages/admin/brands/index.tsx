@@ -1,15 +1,15 @@
 import { SidebarLayout } from "@/components/Layout/SidebarLayout";
-import { AdminSidebar } from "@/components/Sidebar/AdminSidebar";
 import React, { useEffect, useState } from "react";
 import { BrandApi } from "@/services/api/brand";
 import { IBrandModel } from "@/services/interfaces/common";
-import { styled } from '@mui/system';
+import { styled } from "@mui/system";
 import {
   TablePagination,
   tablePaginationClasses as classes,
-} from '@mui/base/TablePagination';
-import EditIcon from '@mui/icons-material/Edit';
-import { CircularProgress, IconButton } from '@mui/material';
+} from "@mui/base/TablePagination";
+import EditIcon from "@mui/icons-material/Edit";
+import { CircularProgress, IconButton } from "@mui/material";
+import { AdminSidebar } from "@/components/Sidebar/AdminSidebar";
 
 type Props = {};
 
@@ -26,7 +26,7 @@ const Main = (props: Props) => {
   const [brands, setBrands] = useState<IBrandModel[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
 
   const getData = async () => {
@@ -40,8 +40,8 @@ const Main = (props: Props) => {
       })
       .finally(() => {
         setLoading(false);
-      })
-  }
+      });
+  };
   useEffect(() => {
     setLoading(true);
     getData();
@@ -56,13 +56,13 @@ const Main = (props: Props) => {
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number,
+    newPage: number
   ) => {
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -74,7 +74,7 @@ const Main = (props: Props) => {
   };
 
   return (
-    <Root sx={{ margin: 4, maxWidth: '100%', width: 700 }}>
+    <Root sx={{ margin: 4, maxWidth: "100%", width: 700 }}>
       <h1 className="text-2xl font-bold">Brands</h1>
       <table aria-label="custom pagination table">
         <thead>
@@ -99,24 +99,34 @@ const Main = (props: Props) => {
           </tr>
         </thead>
         <tbody>
-              { loading ?  <tr><td colSpan={4} style={{textAlign: "center"}}><CircularProgress /></td></tr> : null }
+          {loading ? (
+            <tr>
+              <td colSpan={4} style={{ textAlign: "center" }}>
+                <CircularProgress />
+              </td>
+            </tr>
+          ) : null}
           {(rowsPerPage > 0
-            ? filteredBrands.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            ? filteredBrands.slice(
+                page * rowsPerPage,
+                page * rowsPerPage + rowsPerPage
+              )
             : filteredBrands
-            ).map((row) => (
-              <tr key={row._id}>
+          ).map((row) => (
+            <tr key={row._id}>
               <td>{row.name}</td>
               <td>{row.slug}</td>
               <td>{row.state}</td>
               <td>
-                <IconButton onClick={() => console.log(row.name)} aria-label="edit">
+                <IconButton
+                  onClick={() => console.log(row.name)}
+                  aria-label="edit"
+                >
                   <EditIcon />
                 </IconButton>
               </td>
             </tr>
-
-            )
-            )}
+          ))}
           {/* {emptyRows > 0 && (
             <tr style={{ height: 41 * emptyRows }}>
               <td colSpan={Object.keys(brands[0]).length + 1} aria-hidden />
@@ -126,14 +136,14 @@ const Main = (props: Props) => {
         <tfoot>
           <tr>
             <CustomTablePagination
-              rowsPerPageOptions={[5, 10, 20, { label: 'All', value: -1 }]}
+              rowsPerPageOptions={[5, 10, 20, { label: "All", value: -1 }]}
               colSpan={4}
               count={filteredBrands.length}
               rowsPerPage={rowsPerPage}
               page={page}
               slotProps={{
                 select: {
-                  'aria-label': 'rows per page',
+                  "aria-label": "rows per page",
                 },
                 actions: {
                   showFirstButton: true,
@@ -148,15 +158,15 @@ const Main = (props: Props) => {
       </table>
     </Root>
   );
-}
-
-const grey = {
-  200: '#DAE2ED',
-  800: '#303740',
-  900: '#1C2025',
 };
 
-const Root = styled('div')(
+const grey = {
+  200: "#DAE2ED",
+  800: "#303740",
+  900: "#1C2025",
+};
+
+const Root = styled("div")(
   ({ theme }) => `
   table {
     font-family: 'IBM Plex Sans', sans-serif;
@@ -166,15 +176,15 @@ const Root = styled('div')(
   }
   td,
   th {
-    border: 1px solid ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
+    border: 1px solid ${theme.palette.mode === "dark" ? grey[800] : grey[200]};
     text-align: left;
     padding: 4px;
   }
   th {
-    background-color: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+    background-color: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
     padding: 8px;
   }
-  `,
+  `
 );
 
 const CustomTablePagination = styled(TablePagination)`
