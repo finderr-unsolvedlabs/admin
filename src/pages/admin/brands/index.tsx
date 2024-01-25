@@ -1,209 +1,226 @@
 import { SidebarLayout } from "@/components/Layout/SidebarLayout";
+import { SidebarsMainLoader } from "@/components/Loaders/SidebarsMainLoader";
 import { AdminSidebar } from "@/components/Sidebar/AdminSidebar";
-import React, { useEffect, useState } from "react";
 import { BrandApi } from "@/services/api/brand";
 import { IBrandModel } from "@/services/interfaces/common";
-import { styled } from '@mui/system';
-import {
-  TablePagination,
-  tablePaginationClasses as classes,
-} from '@mui/base/TablePagination';
-import EditIcon from '@mui/icons-material/Edit';
-import { CircularProgress, IconButton } from '@mui/material';
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 
-type Props = {};
+const Brands = () => {
+  const router = useRouter();
+  const page = parseInt(router.query.page as string) || 1;
+  const [brandsList, setBrandList] = useState<IBrandModel[]>([]);
+  useEffect(() => {
+    setBrandList([]);
+    BrandApi.list().then(({ data }) => {
+      setBrandList(data);
+    });
+  }, [page]);
 
-const Brands = (props: Props) => {
   return (
     <SidebarLayout
-      MainComponent={<Main />}
+      MainComponent={
+        brandsList ? <Main brandsList={brandsList} /> : <SidebarsMainLoader />
+      }
       SidebarComponent={<AdminSidebar />}
     />
   );
 };
 
-const Main = (props: Props) => {
-  const [brands, setBrands] = useState<IBrandModel[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState<boolean>(false);
+interface Props {
+  brandsList: IBrandModel[];
+}
 
-  const getData = async () => {
-    BrandApi.list()
-      .then((res) => {
-        console.log(res.data);
-        setBrands(res.data);
-      })
-      .catch((err) => {
-        alert(JSON.stringify(err));
-      })
-      .finally(() => {
-        setLoading(false);
-      })
-  }
-  useEffect(() => {
-    setLoading(true);
-    getData();
-  }, []);
+const Main = ({ brandsList }: Props) => {
+  const itemsPerPage = 10;
+  const [page, setPage] = React.useState(1);
+  const [total, setTotal] = React.useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [totalPages, setTotalPages] = useState(0);
 
-  const filteredBrands = brands.filter((brand) =>
+  const filteredBrands = brandsList.filter((brand) =>
     brand.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - brands.length) : 0;
+  useEffect(() => {
+    setTotal(filteredBrands.length);
+    setTotalPages(Math.ceil(filteredBrands.length / itemsPerPage));
+    // setPage(1);
+    // setSearchTerm("");
+  }, [filteredBrands]);
 
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number,
-  ) => {
-    setPage(newPage);
+  const handleNextClick = () => {
+    if (page === Math.ceil(total / itemsPerPage)) return;
+    setPage(page + 1);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+  const handlePrevClick = () => {
+    if (page === 1) return;
+    setPage(page - 1);
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPage(0);
+    setPage(1);
     setSearchTerm(event.target.value);
   };
 
   return (
-    <Root sx={{ margin: 4, maxWidth: '100%', width: 700 }}>
-      <h1 className="text-2xl font-bold">Brands</h1>
-      <table aria-label="custom pagination table">
-        <thead>
-          <tr>
-            <th colSpan={4}>
-              <input
-                type="text"
-                className="w-full p-2 border border-gray-300 rounded"
-                placeholder="Search"
-                value={searchTerm}
-                onChange={handleSearchChange}
-              />
-            </th>
-          </tr>
-        </thead>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Slug</th>
-            <th>State</th>
-            <th>Edit</th>
-          </tr>
-        </thead>
-        <tbody>
-              { loading ?  <tr><td colSpan={4} style={{textAlign: "center"}}><CircularProgress /></td></tr> : null }
-          {(rowsPerPage > 0
-            ? filteredBrands.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : filteredBrands
-            ).map((row) => (
-              <tr key={row._id}>
-              <td>{row.name}</td>
-              <td>{row.slug}</td>
-              <td>{row.state}</td>
-              <td>
-                <IconButton onClick={() => console.log(row.name)} aria-label="edit">
-                  <EditIcon />
-                </IconButton>
-              </td>
+    <div className="p-4 mb-4 h-full bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 sm:p-6">
+      <h3 className="mb-4 text-xl font-semibold">Brands</h3>
+      <div className="relative overflow-x-auto">
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr className="border">
+              <th colSpan={4}>
+                <input
+                  type="text"
+                  className="w-full p-2"
+                  placeholder="Search"
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                />
+              </th>
             </tr>
-
-            )
-            )}
-          {/* {emptyRows > 0 && (
-            <tr style={{ height: 41 * emptyRows }}>
-              <td colSpan={Object.keys(brands[0]).length + 1} aria-hidden />
+          </thead>
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr className="border">
+              <th scope="col" className="px-6 py-3">
+                Name
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Slug
+              </th>
+              <th scope="col" className="px-6 py-3">
+                State
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Actions
+              </th>
             </tr>
-          )} */}
-        </tbody>
-        <tfoot>
-          <tr>
-            <CustomTablePagination
-              rowsPerPageOptions={[5, 10, 20, { label: 'All', value: -1 }]}
-              colSpan={4}
-              count={filteredBrands.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              slotProps={{
-                select: {
-                  'aria-label': 'rows per page',
-                },
-                actions: {
-                  showFirstButton: true,
-                  showLastButton: true,
-                },
-              }}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </tr>
-        </tfoot>
-      </table>
-    </Root>
+          </thead>
+          <tbody>
+            {filteredBrands
+              .slice(
+                (page - 1) * itemsPerPage,
+                (page - 1) * itemsPerPage + itemsPerPage
+              )
+              .map((brand, index) => {
+                return (
+                  <tr className="bg-white border" key={index}>
+                    <td
+                      scope="row"
+                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                    >
+                      {brand.name}
+                    </td>
+                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                      {brand.slug}
+                    </td>
+                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                      {brand.state}
+                    </td>
+                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                      <div className="flex items-center space-x-4">
+                        <a
+                          href={`/admin/brands/${brand.slug}/edit`}
+                          className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                        >
+                          Edit
+                        </a>
+                        <a
+                          href="#"
+                          className="font-medium text-red-600 dark:text-red-500 hover:underline"
+                        >
+                          Remove
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </table>
+        <div className="flex items-center mt-4 justify-between">
+          <span className="text-sm text-gray-700">
+            {"Showing "}
+            <span className="font-semibold text-gray-900">
+              {Math.max((page - 1) * itemsPerPage, 1)}
+            </span>{" "}
+            to{" "}
+            <span className="font-semibold text-gray-900">
+              {Math.min(page * itemsPerPage, total)}
+            </span>{" "}
+            of <span className="font-semibold text-gray-900">{total}</span>{" "}
+            Entries
+          </span>
+          <div className="flex items-center gap-2">
+            <div>
+              Page :&nbsp;
+              <select onChange={(e) => setPage(parseInt(e.target.value))}>
+                {Array.from(Array(totalPages).keys()).map((pg) => (
+                  <option
+                    selected={page === pg + 1}
+                    key={pg + 1}
+                    value={pg + 1}
+                  >
+                    {pg + 1}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button
+              onClick={handlePrevClick}
+              className={
+                "flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 " +
+                (page === 1 ? "cursor-not-allowed" : "cursor-pointer")
+              }
+            >
+              <svg
+                className="w-3.5 h-3.5 me-2 rtl:rotate-180"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 14 10"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 5H1m0 0 4 4M1 5l4-4"
+                />
+              </svg>
+              Previous
+            </button>
+            <div
+              onClick={handleNextClick}
+              className={
+                "flex items-center justify-center cursor-pointer px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 " +
+                (page === totalPages ? "cursor-not-allowed" : "cursor-pointer")
+              }
+            >
+              Next
+              <svg
+                className="w-3.5 h-3.5 ms-2 rtl:rotate-180"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 14 10"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M1 5h12m0 0L9 1m4 4L9 9"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
-}
-
-const grey = {
-  200: '#DAE2ED',
-  800: '#303740',
-  900: '#1C2025',
 };
-
-const Root = styled('div')(
-  ({ theme }) => `
-  table {
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 0.875rem;
-    border-collapse: collapse;
-    width: 100%;
-  }
-  td,
-  th {
-    border: 1px solid ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
-    text-align: left;
-    padding: 4px;
-  }
-  th {
-    background-color: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-    padding: 8px;
-  }
-  `,
-);
-
-const CustomTablePagination = styled(TablePagination)`
-  & .${classes.toolbar} {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    @media (min-width: 768px) {
-      flex-direction: row;
-      align-items: center;
-    }
-  }
-  & .${classes.selectLabel} {
-    margin: 0;
-  }
-  & .${classes.displayedRows} {
-    margin: 0;
-    @media (min-width: 768px) {
-      margin-left: auto;
-    }
-  }
-  & .${classes.spacer} {
-    display: none;
-  }
-  & .${classes.actions} {
-    display: flex;
-    gap: 0.25rem;
-  }
-`;
 
 export default Brands;
