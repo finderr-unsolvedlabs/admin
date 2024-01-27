@@ -43,7 +43,7 @@ const Main = ({ brandData }: Props) => {
     rating: brandData.rating,
     state: brandData.state,
     logo_key: brandData.logo.slug,
-    profile_pic_key: brandData.profile_pic.slug,
+    profile_pic_key: brandData.profile_pic?.slug,
     contact: brandData.contact,
     cover_images_keys: brandData.cover_images.map((image) => image.slug),
   };

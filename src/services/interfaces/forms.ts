@@ -16,7 +16,7 @@ export interface IBrandUpdateForm {
   description: string | null;
   contact: { phone: string };
   logo_key: string;
-  profile_pic_key: string;
+  profile_pic_key?: string;
   cover_images_keys: string[];
   state: string;
   rating: number;

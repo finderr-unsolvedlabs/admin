@@ -6,6 +6,8 @@ import {
 } from "@/services/interfaces/common";
 import { IconButton } from "@mui/material";
 import { useRouter } from "next/router";
+import { dateFormat } from "@/utils/constants/common";
+import moment from "moment";
 
 type Props = {
   title: string;
@@ -67,7 +69,7 @@ const EventsTable = ({ title, eventsData }: Props) => {
                       {event.action.label}
                     </td>
                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
-                      20-10-2023
+                      {moment(event.expiry_date).format(dateFormat)}
                     </td>
                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
                       <div className="flex items-center space-x-4">

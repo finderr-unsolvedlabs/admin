@@ -64,7 +64,7 @@ export interface IBrandModel {
   state: string;
   rating: number;
   logo: IImageModel;
-  profile_pic: IImageModel;
+  profile_pic?: IImageModel;
   contact: { phone: string };
   description: string | null;
   cover_images: IImageModel[];
@@ -151,6 +151,7 @@ export interface IBaseInfo {
   description: string | null;
   image: IImageModel;
   action: IAction;
+  expiry_date: string;
 }
 
 export interface INotification extends IBaseInfo {}
