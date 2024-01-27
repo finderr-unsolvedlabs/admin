@@ -7,7 +7,8 @@ import Select from "react-select";
 type Props = {
   label?: string;
   isMulti?: boolean;
-  value: TSelectorOptions;
+  useSlug?: boolean;
+  value: TSelectorOptions | null;
   onchange: (items: TSelectorOptions) => void;
 };
 
@@ -17,7 +18,7 @@ const BrandSelector = (props: Props) => {
       setoptions(
         data.map((brand) => ({
           label: brand.name,
-          value: brand.slug,
+          value: props.useSlug ? brand.slug : brand._id,
         }))
       );
     });

@@ -1,6 +1,8 @@
 import { SidebarLayout } from "@/components/Layout/SidebarLayout";
 import { AdminSidebar } from "@/components/Sidebar/AdminSidebar";
+import { BrandSelector } from "@/components/selectors/BrandSelector";
 import { OffersApi } from "@/services/api/offers";
+import { TOption } from "@/services/interfaces/common";
 import { ICreateOfferForm } from "@/services/interfaces/forms";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -14,7 +16,11 @@ const create = () => {
   );
 };
 
-export const emptyFormData: ICreateOfferForm = {
+interface IForm extends ICreateOfferForm {
+  brand?: TOption;
+}
+
+export const emptyFormData: IForm = {
   title: "",
   imageKey: "",
   expiry_date: "",
@@ -27,7 +33,7 @@ export const emptyFormData: ICreateOfferForm = {
 const Main = () => {
   const router = useRouter();
 
-  const [formData, setFormData] = useState<ICreateOfferForm>(emptyFormData);
+  const [formData, setFormData] = useState<IForm>(emptyFormData);
 
   const submitHandler = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -149,17 +155,16 @@ const Main = () => {
             />
           </div>
           <div className="mt-5 w-full">
-            <label className="block mb-2 text-sm font-medium text-gray-900">
-              Brand Id
-            </label>
-            <input
-              id="brand_id"
-              type="text"
-              onChange={(e) =>
-                setFormData({ ...formData, brand_id: e.target.value })
-              }
-              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              placeholder="brand_id (optional)"
+            <BrandSelector
+              value={formData.brand || null}
+              onchange={(option) => {
+                const _option = option as TOption;
+                setFormData({
+                  ...formData,
+                  brand_id: _option?.value,
+                  brand: _option,
+                });
+              }}
             />
           </div>
         </div>

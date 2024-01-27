@@ -186,6 +186,7 @@ const Main = () => {
         <BrandSelector
           value={queryForm.values.brands || null}
           isMulti
+          useSlug
           onchange={(options) => queryForm.setFieldValue("brands", options)}
         />
 
