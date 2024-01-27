@@ -153,22 +153,16 @@ export interface IBaseInfo {
 
 export interface INotification extends IBaseInfo {}
 
-export interface IEventListResponse {
+export interface IEventListResponse extends IPaginatedResultBase {
   data: IEvent[];
-  pagination: {
-    total: number;
-  };
 }
 
 export interface IEvent extends IBaseInfo {
   slug: string;
 }
 
-export interface IOfferListResponse {
+export interface IOfferListResponse extends IPaginatedResultBase {
   data: IOfferModel[];
-  pagination: {
-    total: number;
-  };
 }
 
 export interface IOfferModel extends IBaseInfo {
