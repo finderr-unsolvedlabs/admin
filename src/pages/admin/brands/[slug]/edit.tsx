@@ -3,6 +3,7 @@ import { SidebarsMainLoader } from "@/components/Loaders/SidebarsMainLoader";
 import { AdminSidebar } from "@/components/Sidebar/AdminSidebar";
 import { BrandApi } from "@/services/api/brand";
 import { IBrandModel } from "@/services/interfaces/common";
+import { IBrandUpdateForm } from "@/services/interfaces/forms";
 // import { EventsApi } from "@/services/api/events";
 // import { ICreateEventForm } from "@/services/interfaces/forms";
 import { useRouter } from "next/router";
@@ -15,7 +16,6 @@ const Edit = () => {
   useEffect(() => {
     BrandApi.list().then(({ data }) => {
       const reqData = data.filter((brand) => brand.slug === brand_slug);
-      console.log(reqData);
       if (reqData.length > 0) setBrandData(reqData[0]);
     });
   }, [brand_slug]);
@@ -37,12 +37,30 @@ type Props = {
 const Main = ({ brandData }: Props) => {
   const router = useRouter();
 
-  const [formData, setFormData] = React.useState(brandData);
+  const convertedData: IBrandUpdateForm = {
+    name: brandData.name,
+    description: brandData.description,
+    state: brandData.state,
+    logo_key: brandData.logo.slug,
+    profile_pic_key: brandData.profile_pic.slug,
+    contact: brandData.contact,
+    cover_images_key: brandData.cover_images.map((image) => image.slug),
+  };
+
+  const [coverImages, setCoverImages] = useState<string>(
+    convertedData.cover_images_key.join(",")
+  );
+
+  const [formData, setFormData] = useState<IBrandUpdateForm>(convertedData);
 
   const submitHandler = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (formData === brandData) {
+    const coverImagesArr = coverImages.split(",");
+
+    formData.cover_images_key = coverImagesArr;
+
+    if (formData === convertedData) {
       alert("No changes made");
       return;
     }
@@ -54,6 +72,28 @@ const Main = ({ brandData }: Props) => {
       })
       .catch((error) => {
         alert("Something went wrong!");
+        console.error(error);
+      });
+  };
+
+  const toggleState = () => {
+    if (formData.state === "active") {
+      convertedData.state = "inactive";
+    } else {
+      convertedData.state = "active";
+    }
+    BrandApi.editBrand(brandData._id, convertedData)
+      .then(({ data }) => {
+        setFormData({ ...formData, state: convertedData.state });
+        alert("Brand State Updated Successfully");
+      })
+      .catch((error) => {
+        alert("Something went wrong!");
+        if (convertedData.state === "active") {
+          convertedData.state = "inactive";
+        } else {
+          convertedData.state = "active";
+        }
         console.error(error);
       });
   };
@@ -79,45 +119,6 @@ const Main = ({ brandData }: Props) => {
               required
             />
           </div>
-          <div className="mt-5 w-1/2">
-            <label className="block mb-2 text-sm font-medium text-gray-900">
-              State*
-            </label>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center">
-                <input
-                  checked={formData.state === "active" ? true : false}
-                  onClick={() => setFormData({ ...formData, state: "active" })}
-                  id="state_active"
-                  type="radio"
-                  value="active"
-                  name="state"
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:outline-none"
-                />
-                <label className="ms-2 text-sm font-medium text-gray-900">
-                  Active
-                </label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  checked={formData.state === "inactive" ? true : false}
-                  onClick={() =>
-                    setFormData({ ...formData, state: "inactive" })
-                  }
-                  id="state_inactive"
-                  type="radio"
-                  value="inactive"
-                  name="state"
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:outline-none"
-                />
-                <label className="ms-2 text-sm font-medium text-gray-900">
-                  Inactive
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-center gap-2">
           <div className="mt-5 w-full">
             <label className="block mb-2 text-sm font-medium text-gray-900">
               Contact Number*
@@ -129,6 +130,73 @@ const Main = ({ brandData }: Props) => {
               onChange={(e) =>
                 setFormData({ ...formData, contact: { phone: e.target.value } })
               }
+              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              placeholder="image s3 key"
+              required
+            />
+          </div>
+          <div className="mt-5 w-4/12">
+            <label className="block mb-2 text-sm font-medium text-gray-900">
+              Current State: {formData.state}
+            </label>
+            <div
+              onClick={toggleState}
+              className="text-white cursor-pointer bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+            >
+              {formData.state === "active" ? "Deactivate" : "Activate"}
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-center gap-2">
+          <div className="mt-5 w-full">
+            <label className="block mb-2 text-sm font-medium text-gray-900">
+              Logo Key*
+            </label>
+            <input
+              id="logo_key"
+              type="text"
+              value={formData.logo_key}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  logo_key: e.target.value,
+                })
+              }
+              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              placeholder="image s3 key"
+              required
+            />
+          </div>
+          <div className="mt-5 w-full">
+            <label className="block mb-2 text-sm font-medium text-gray-900">
+              Profile Picture Key*
+            </label>
+            <input
+              id="profile_pic"
+              type="text"
+              value={formData.profile_pic_key}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  profile_pic_key: e.target.value,
+                })
+              }
+              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              placeholder="image s3 key"
+              required
+            />
+          </div>
+        </div>
+        <div className="flex justify-center gap-2">
+          <div className="mt-5 w-full">
+            <label className="block mb-2 text-sm font-medium text-gray-900">
+              Cover Images Keys (comma separated)*
+            </label>
+            <input
+              id="logo_key"
+              type="text"
+              value={coverImages}
+              onChange={(e) => setCoverImages(e.target.value)}
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="image s3 key"
               required
