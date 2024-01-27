@@ -4,7 +4,11 @@ import RecentViewedProducts from "@/components/Tables/RecentViewedProducts";
 import { IUserDetails, UserApi } from "@/services/api/user";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { FullPageLoader } from "@/components/Loaders/FullPageLoader";
+import { SidebarLayout } from "@/components/Layout/SidebarLayout";
+import { AdminSidebar } from "@/components/Sidebar/AdminSidebar";
+import { SidebarsMainLoader } from "@/components/Loaders/SidebarsMainLoader";
+import moment from "moment";
+import { dateFormat } from "@/utils/constants/common";
 
 const ProfileHeading = ({ title }: { title: string }) => {
   return <div className="mb-3 text-sm text-gray-900">{title}</div>;
@@ -31,40 +35,55 @@ const User = () => {
     }
   }, [user_id]);
 
-  if (!userData) {
-    return (
-      <>
-        <FullPageLoader />;
-      </>
-    );
-  } else {
-    return (
-      <div className="min-h-screen w-full bg-gray-50">
-        <div className="grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4">
-          <div className="mb-4 col-span-full xl:mb-2">
-            <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">
-              User Profile
-            </h1>
-          </div>
-          <div className="col-span-full xl:col-auto">
-            <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 sm:p-6">
-              {/* <div className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4"> */}
-              <h3 className="mb-4 text-xl font-bold text-gray-900">
-                {user_id}
-              </h3>
-              <div className="items-center w-full sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4 overflow-hidden">
-                <div className="grid grid-cols-2 w-full">
-                  <ProfileHeading title="Name" />
-                  <ProfileData data={userData.name || ""} />
-                  <ProfileHeading title="Email Address" />
-                  <ProfileData data={userData.email || ""} />
-                  <ProfileHeading title="Phone Number" />
-                  <ProfileData data={userData.mobile || ""} />
-                </div>
+  return (
+    <SidebarLayout
+      MainComponent={
+        userData ? (
+          <Main user_id={user_id ?? ""} userData={userData} />
+        ) : (
+          <SidebarsMainLoader />
+        )
+      }
+      SidebarComponent={<AdminSidebar />}
+    />
+  );
+};
+
+type Props = {
+  user_id: string | string[];
+  userData: IUserDetails;
+};
+
+const Main = ({ user_id, userData }: Props) => {
+  return (
+    <div className="min-h-screen w-full bg-gray-50">
+      <div className="grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4">
+        <div className="mb-4 col-span-full xl:mb-2">
+          <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">
+            User Profile
+          </h1>
+        </div>
+        <div className="col-span-full xl:col-auto">
+          <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 sm:p-6">
+            {/* <div className="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4"> */}
+            <h3 className="mb-4 text-xl font-bold text-gray-900">{user_id}</h3>
+            <div className="items-center w-full sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4 overflow-hidden">
+              <div className="grid grid-cols-2 w-full">
+                <ProfileHeading title="Name" />
+                <ProfileData data={userData.name || ""} />
+                <ProfileHeading title="Email Address" />
+                <ProfileData data={userData.email || ""} />
+                <ProfileHeading title="Phone Number" />
+                <ProfileData data={userData.mobile || ""} />
+                <ProfileHeading title="Created At" />
+                <ProfileData
+                  data={moment(userData.createdAt).format(dateFormat) || ""}
+                />
               </div>
             </div>
-            <LogsTable userDetails={userData} />
-            {/* <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 sm:p-6">
+          </div>
+          <LogsTable userDetails={userData} />
+          {/* <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 sm:p-6">
               <div className="items-center">
                 <h3 className="mb-4 text-xl font-bold text-gray-900">
                   User Labels
@@ -117,33 +136,32 @@ const User = () => {
                 </div>
               </div>
             </div> */}
-          </div>
-          <div className="col-span-2">
-            {userData.cart === null ? (
-              <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 sm:p-6">
-                <div className="items-center">
-                  <h3 className="mb-4 text-xl font-bold text-gray-900">Cart</h3>
-                  <div className="text-center">
-                    <p className="text-gray-500">No items in cart</p>
-                  </div>
+        </div>
+        <div className="col-span-2">
+          {userData.cart === null ? (
+            <div className="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 sm:p-6">
+              <div className="items-center">
+                <h3 className="mb-4 text-xl font-bold text-gray-900">Cart</h3>
+                <div className="text-center">
+                  <p className="text-gray-500">No items in cart</p>
                 </div>
               </div>
-            ) : (
-              <CartProducts userDetails={userData} />
-            )}
-            <RecentViewedProducts
-              products={userData.recentlyViewedProducts}
-              title="Recently Viewed Products"
-            />
-            <RecentViewedProducts
-              products={userData.wishlist ?? []}
-              title="Wishlist Products"
-            />
-          </div>
+            </div>
+          ) : (
+            <CartProducts userDetails={userData} />
+          )}
+          <RecentViewedProducts
+            products={userData.recentlyViewedProducts}
+            title="Recently Viewed Products"
+          />
+          <RecentViewedProducts
+            products={userData.wishlist ?? []}
+            title="Wishlist Products"
+          />
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 };
 
 export default User;
