@@ -45,11 +45,11 @@ const Main = ({ brandData }: Props) => {
     logo_key: brandData.logo.slug,
     profile_pic_key: brandData.profile_pic.slug,
     contact: brandData.contact,
-    cover_images_key: brandData.cover_images.map((image) => image.slug),
+    cover_images_keys: brandData.cover_images.map((image) => image.slug),
   };
 
   const [coverImages, setCoverImages] = useState<string>(
-    convertedData.cover_images_key.join(",")
+    convertedData.cover_images_keys.join(",")
   );
 
   const [formData, setFormData] = useState<IBrandUpdateForm>(convertedData);
@@ -59,7 +59,7 @@ const Main = ({ brandData }: Props) => {
 
     const coverImagesArr = coverImages.split(",");
 
-    formData.cover_images_key = coverImagesArr;
+    formData.cover_images_keys = coverImagesArr;
 
     if (formData === convertedData) {
       alert("No changes made");

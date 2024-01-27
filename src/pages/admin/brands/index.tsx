@@ -29,11 +29,13 @@ interface Props {
 }
 
 const Main = ({ brandsList }: Props) => {
-  const itemsPerPage = 10;
-  const [page, setPage] = React.useState(1);
-  const [total, setTotal] = React.useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [totalPages, setTotalPages] = useState(0);
+
+  const pagesOptions = [10, 20, 30, 50];
 
   const filteredBrands = brandsList.filter((brand) =>
     brand.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -91,6 +93,9 @@ const Main = ({ brandsList }: Props) => {
                 State
               </th>
               <th scope="col" className="px-6 py-3">
+                Rating
+              </th>
+              <th scope="col" className="px-6 py-3">
                 Actions
               </th>
             </tr>
@@ -115,6 +120,9 @@ const Main = ({ brandsList }: Props) => {
                     </td>
                     <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                       {brand.state}
+                    </td>
+                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                      {brand.rating}
                     </td>
                     <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                       <div className="flex items-center space-x-4">
@@ -151,6 +159,28 @@ const Main = ({ brandsList }: Props) => {
             Entries
           </span>
           <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 me-3">
+              <label className="text-sm w-full font-medium text-gray-900">
+                Items Per Page:
+              </label>
+              <select
+                id="items_per_page"
+                onChange={(e) => {
+                  setItemsPerPage(parseInt(e.target.value));
+                }}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 px-2.5 py-1.5"
+              >
+                {pagesOptions.map((num_pages) => (
+                  <option
+                    selected={itemsPerPage == num_pages ? true : false}
+                    key={num_pages}
+                    value={num_pages}
+                  >
+                    {num_pages}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div>
               Page :&nbsp;
               <select onChange={(e) => setPage(parseInt(e.target.value))}>
