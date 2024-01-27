@@ -9,6 +9,10 @@ const list = (): Promise<AxiosResponse<IBrandModel[]>> => {
   return sendRequest(baseUrl);
 };
 
+const getBrand = (id: string): Promise<AxiosResponse<IBrandModel>> => {
+  return sendRequest(`${baseUrl}/${id}`);
+};
+
 const editBrand = (
   id: string,
   data: IBrandUpdateForm
@@ -16,5 +20,5 @@ const editBrand = (
   return sendRequest(`${baseUrl}/${id}`, { method: "PATCH", data });
 };
 
-const BrandApi = { list, editBrand };
+const BrandApi = { list, editBrand, getBrand };
 export { BrandApi };

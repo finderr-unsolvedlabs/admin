@@ -127,7 +127,7 @@ const Main = ({ brandsList }: Props) => {
                     <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                       <div className="flex items-center space-x-4">
                         <a
-                          href={`/admin/brands/${brand.slug}/edit`}
+                          href={`/admin/brands/${brand._id}/edit`}
                           className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                         >
                           Edit

@@ -4,21 +4,20 @@ import { AdminSidebar } from "@/components/Sidebar/AdminSidebar";
 import { BrandApi } from "@/services/api/brand";
 import { IBrandModel } from "@/services/interfaces/common";
 import { IBrandUpdateForm } from "@/services/interfaces/forms";
-// import { EventsApi } from "@/services/api/events";
-// import { ICreateEventForm } from "@/services/interfaces/forms";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 const Edit = () => {
   const router = useRouter();
-  const brand_slug = router.query.slug as string;
+  const brand_id = router.query.id as string;
   const [brandData, setBrandData] = useState<IBrandModel>();
   useEffect(() => {
-    BrandApi.list().then(({ data }) => {
-      const reqData = data.filter((brand) => brand.slug === brand_slug);
-      if (reqData.length > 0) setBrandData(reqData[0]);
-    });
-  }, [brand_slug]);
+    if (brand_id) {
+      BrandApi.getBrand(brand_id).then(({ data }) => {
+        setBrandData(data);
+      });
+    }
+  }, [brand_id]);
 
   return (
     <SidebarLayout
