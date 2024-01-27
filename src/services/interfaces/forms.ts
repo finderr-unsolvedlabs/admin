@@ -19,6 +19,7 @@ export interface IBrandUpdateForm {
   profile_pic_key: string;
   cover_images_key: string[];
   state: string;
+  rating: number;
 }
 
 export interface ICreateEventForm {

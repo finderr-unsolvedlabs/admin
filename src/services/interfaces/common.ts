@@ -62,6 +62,7 @@ export interface IBrandModel {
   name: string;
   slug: string;
   state: string;
+  rating: number;
   logo: IImageModel;
   profile_pic: IImageModel;
   contact: { phone: string };

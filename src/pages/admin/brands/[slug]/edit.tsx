@@ -40,6 +40,7 @@ const Main = ({ brandData }: Props) => {
   const convertedData: IBrandUpdateForm = {
     name: brandData.name,
     description: brandData.description,
+    rating: brandData.rating,
     state: brandData.state,
     logo_key: brandData.logo.slug,
     profile_pic_key: brandData.profile_pic.slug,
@@ -185,6 +186,28 @@ const Main = ({ brandData }: Props) => {
               placeholder="image s3 key"
               required
             />
+          </div>
+          <div className="mt-5 w-4/12">
+            <label className="block mb-2 text-sm font-medium text-gray-900">
+              Rating*
+            </label>
+            <select
+              id="rating"
+              onChange={(e) =>
+                setFormData({ ...formData, rating: parseInt(e.target.value) })
+              }
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+            >
+              {Array.from(Array(5)).map((i1, i) => (
+                <option
+                  key={i + 1}
+                  selected={formData.rating == i + 1}
+                  value={i + 1}
+                >
+                  {i + 1}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
         <div className="flex justify-center gap-2">
