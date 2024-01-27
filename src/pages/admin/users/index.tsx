@@ -9,18 +9,31 @@ import { useRouter } from "next/router";
 const Page = () => {
   const router = useRouter();
   const page = parseInt(router.query.page as string) || 1;
+  const [itemsPerPage, setItemsPerPage] = useState<number>(10);
   const [usersList, setUsersList] = useState<IUserListResponse>();
   useEffect(() => {
     setUsersList(undefined);
-    UserApi.list({ page }).then(({ data }) => {
+    UserApi.list({ page, limit: itemsPerPage }).then(({ data }) => {
       setUsersList(data);
     });
-  }, [page]);
+  }, [page, itemsPerPage]);
+
+  const handleItemsPerPageChange = (items: number) => {
+    setItemsPerPage(items);
+  };
 
   return (
     <SidebarLayout
       MainComponent={
-        usersList ? <Main userList={usersList} /> : <SidebarsMainLoader />
+        usersList ? (
+          <Main
+            userList={usersList}
+            handlePageChange={handleItemsPerPageChange}
+            itemsPerPage={itemsPerPage}
+          />
+        ) : (
+          <SidebarsMainLoader />
+        )
       }
       SidebarComponent={<AdminSidebar />}
     />
@@ -29,8 +42,10 @@ const Page = () => {
 
 interface Props {
   userList: IUserListResponse;
+  handlePageChange: (items: number) => void;
+  itemsPerPage: number;
 }
-const Main = ({ userList }: Props) => {
+const Main = ({ userList, handlePageChange, itemsPerPage }: Props) => {
   console.log(`page` + userList.data[0].user_name);
 
   return (
@@ -97,7 +112,11 @@ const Main = ({ userList }: Props) => {
         </div>
       </div>
 
-      <UsersTable userList={userList} />
+      <UsersTable
+        userList={userList}
+        handlePageChange={handlePageChange}
+        itemsPerPage={itemsPerPage}
+      />
     </div>
   );
 };

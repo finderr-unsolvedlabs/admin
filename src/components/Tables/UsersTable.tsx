@@ -9,16 +9,19 @@ import { useRouter } from "next/router";
 
 type Props = {
   userList: IUserListResponse;
+  handlePageChange: (items: number) => void;
+  itemsPerPage: number;
 };
 
-const UsersTable = ({ userList }: Props) => {
+const UsersTable = ({ userList, handlePageChange, itemsPerPage }: Props) => {
   const router = useRouter();
   const page = parseInt(router.query.page as string) || 1;
   const {
     pagination: { total },
     data: users,
   } = userList;
-  const itemsPerPage = 10;
+
+  const pagesOptions = [10, 20, 30, 50];
 
   console.log(`tabel` + userList.data[0].user_name);
 
@@ -109,6 +112,28 @@ const UsersTable = ({ userList }: Props) => {
             Entries
           </span>
           <div className="flex">
+            <div className="flex items-center gap-2 me-3">
+              <label className="text-sm w-full font-medium text-gray-900">
+                Items Per Page:
+              </label>
+              <select
+                id="items_per_page"
+                onChange={(e) => {
+                  handlePageChange(parseInt(e.target.value));
+                }}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 px-2.5 py-1.5"
+              >
+                {pagesOptions.map((num_pages) => (
+                  <option
+                    selected={itemsPerPage == num_pages ? true : false}
+                    key={num_pages}
+                    value={num_pages}
+                  >
+                    {num_pages}
+                  </option>
+                ))}
+              </select>
+            </div>
             <button
               onClick={handlePrevClick}
               className={
