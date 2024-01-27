@@ -154,8 +154,16 @@ export interface IBaseInfo {
 
 export interface INotification extends IBaseInfo {}
 
+export interface IEventListResponse extends IPaginatedResultBase {
+  data: IEvent[];
+}
+
 export interface IEvent extends IBaseInfo {
   slug: string;
+}
+
+export interface IOfferListResponse extends IPaginatedResultBase {
+  data: IOfferModel[];
 }
 
 export interface IOfferModel extends IBaseInfo {
