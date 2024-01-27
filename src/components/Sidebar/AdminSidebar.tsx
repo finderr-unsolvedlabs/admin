@@ -10,6 +10,8 @@ import HomeIcon from "@mui/icons-material/Home";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import CheckroomIcon from "@mui/icons-material/Checkroom";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import MuiDrawer from "@mui/material/Drawer";
 import { CSSObject, Theme, styled } from "@mui/material";
 
@@ -19,7 +21,9 @@ const routes = [
   { name: "home", path: "/admin", icon: <HomeIcon /> },
   { name: "brands", path: "/admin/brands", icon: <InventoryIcon /> },
   { name: "products", path: "/admin/products", icon: <CheckroomIcon /> },
-  { name: "tagging", path: "/admin/taggings", icon: <LocalOfferIcon /> },
+  { name: "tagging", path: "/admin/tagging", icon: <LocalOfferIcon /> },
+  { name: "events", path: "/admin/events", icon: <EventAvailableIcon /> },
+  { name: "offers", path: "/admin/offers", icon: <AttachMoneyIcon /> },
   { name: "users", path: "/admin/users", icon: <PeopleAltIcon /> },
 ];
 
