@@ -79,7 +79,7 @@ const UsersTable = ({ userList, handlePageChange, itemsPerPage }: Props) => {
                     {user.wishlist?.length || 0}
                   </td>
                   <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                    {moment(user.lastLoginTime).format(dateFormat)}
+                    {moment(user.lastVisitedTime).format(dateFormat)}
                   </td>
                   <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                     {moment(user.createdAt).format(dateFormat)}
