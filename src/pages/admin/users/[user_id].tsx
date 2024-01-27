@@ -7,6 +7,8 @@ import { useRouter } from "next/router";
 import { SidebarLayout } from "@/components/Layout/SidebarLayout";
 import { AdminSidebar } from "@/components/Sidebar/AdminSidebar";
 import { SidebarsMainLoader } from "@/components/Loaders/SidebarsMainLoader";
+import moment from "moment";
+import { dateFormat } from "@/utils/constants/common";
 
 const ProfileHeading = ({ title }: { title: string }) => {
   return <div className="mb-3 text-sm text-gray-900">{title}</div>;
@@ -73,6 +75,10 @@ const Main = ({ user_id, userData }: Props) => {
                 <ProfileData data={userData.email || ""} />
                 <ProfileHeading title="Phone Number" />
                 <ProfileData data={userData.mobile || ""} />
+                <ProfileHeading title="Created At" />
+                <ProfileData
+                  data={moment(userData.createdAt).format(dateFormat) || ""}
+                />
               </div>
             </div>
           </div>

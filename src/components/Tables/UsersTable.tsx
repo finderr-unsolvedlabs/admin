@@ -52,6 +52,9 @@ const UsersTable = ({ userList }: Props) => {
                 Last Visited
               </th>
               <th scope="col" className="px-6 py-3">
+                Created At
+              </th>
+              <th scope="col" className="px-6 py-3">
                 Profile Link
               </th>
             </tr>
@@ -74,6 +77,9 @@ const UsersTable = ({ userList }: Props) => {
                   </td>
                   <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                     {moment(user.lastLoginTime).format(dateFormat)}
+                  </td>
+                  <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                    {moment(user.createdAt).format(dateFormat)}
                   </td>
                   <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                     <a
