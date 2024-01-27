@@ -21,7 +21,7 @@ export interface IUserDetails extends IUserModel {
 }
 
 interface IListUser extends IUserModel {
-  lastLoginTime: string;
+  lastVisitedTime: string;
   totalProductsInCart: number;
 }
 

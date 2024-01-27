@@ -9,16 +9,19 @@ import { useRouter } from "next/router";
 
 type Props = {
   userList: IUserListResponse;
+  handlePageChange: (items: number) => void;
+  itemsPerPage: number;
 };
 
-const UsersTable = ({ userList }: Props) => {
+const UsersTable = ({ userList, handlePageChange, itemsPerPage }: Props) => {
   const router = useRouter();
   const page = parseInt(router.query.page as string) || 1;
   const {
     pagination: { total },
     data: users,
   } = userList;
-  const itemsPerPage = 10;
+
+  const pagesOptions = [10, 20, 30, 50];
 
   console.log(`tabel` + userList.data[0].user_name);
 
@@ -38,7 +41,7 @@ const UsersTable = ({ userList }: Props) => {
       <div className="relative overflow-x-auto">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-            <tr>
+            <tr className="border">
               <th scope="col" className="px-6 py-3">
                 User Name
               </th>
@@ -50,6 +53,9 @@ const UsersTable = ({ userList }: Props) => {
               </th>
               <th scope="col" className="px-6 py-3">
                 Last Visited
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Created At
               </th>
               <th scope="col" className="px-6 py-3">
                 Profile Link
@@ -73,7 +79,10 @@ const UsersTable = ({ userList }: Props) => {
                     {user.wishlist?.length || 0}
                   </td>
                   <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                    {moment(user.lastLoginTime).format(dateFormat)}
+                    {moment(user.lastVisitedTime).format(dateFormat)}
+                  </td>
+                  <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                    {moment(user.createdAt).format(dateFormat)}
                   </td>
                   <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                     <a
@@ -103,6 +112,28 @@ const UsersTable = ({ userList }: Props) => {
             Entries
           </span>
           <div className="flex">
+            <div className="flex items-center gap-2 me-3">
+              <label className="text-sm w-full font-medium text-gray-900">
+                Items Per Page:
+              </label>
+              <select
+                id="items_per_page"
+                onChange={(e) => {
+                  handlePageChange(parseInt(e.target.value));
+                }}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 px-2.5 py-1.5"
+              >
+                {pagesOptions.map((num_pages) => (
+                  <option
+                    selected={itemsPerPage == num_pages ? true : false}
+                    key={num_pages}
+                    value={num_pages}
+                  >
+                    {num_pages}
+                  </option>
+                ))}
+              </select>
+            </div>
             <button
               onClick={handlePrevClick}
               className={
