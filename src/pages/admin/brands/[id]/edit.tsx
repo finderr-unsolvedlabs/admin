@@ -79,23 +79,29 @@ const Main = ({ brandData }: Props) => {
   const toggleState = () => {
     if (formData.state === "active") {
       convertedData.state = "inactive";
+      BrandApi.deactivate(brandData._id)
+        .then(({ data }) => {
+          setFormData({ ...formData, state: "inactive" });
+          alert(data);
+        })
+        .catch((error) => {
+          alert("Something went wrong!");
+          convertedData.state = "active";
+          console.error(error);
+        });
     } else {
       convertedData.state = "active";
-    }
-    BrandApi.editBrand(brandData._id, convertedData)
-      .then(({ data }) => {
-        setFormData({ ...formData, state: convertedData.state });
-        alert("Brand State Updated Successfully");
-      })
-      .catch((error) => {
-        alert("Something went wrong!");
-        if (convertedData.state === "active") {
+      BrandApi.activate(brandData._id)
+        .then(({ data }) => {
+          setFormData({ ...formData, state: "active" });
+          alert(data);
+        })
+        .catch((error) => {
+          alert("Something went wrong!");
           convertedData.state = "inactive";
-        } else {
-          convertedData.state = "active";
-        }
-        console.error(error);
-      });
+          console.error(error);
+        });
+    }
   };
 
   return (
@@ -141,7 +147,12 @@ const Main = ({ brandData }: Props) => {
             </label>
             <div
               onClick={toggleState}
-              className="text-white cursor-pointer bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+              className={
+                "text-white cursor-pointer focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center " +
+                (formData.state === "active"
+                  ? " bg-red-600 hover:bg-red-700"
+                  : "bg-green-600 hover:bg-green-700")
+              }
             >
               {formData.state === "active" ? "Deactivate" : "Activate"}
             </div>

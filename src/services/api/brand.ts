@@ -20,5 +20,13 @@ const editBrand = (
   return sendRequest(`${baseUrl}/${id}`, { method: "PATCH", data });
 };
 
-const BrandApi = { list, editBrand, getBrand };
+const activate = (id: string): Promise<AxiosResponse<string>> => {
+  return sendRequest(`${baseUrl}/${id}/activate`, { method: "PATCH" });
+};
+
+const deactivate = (id: string): Promise<AxiosResponse<string>> => {
+  return sendRequest(`${baseUrl}/${id}/deactivate`, { method: "PATCH" });
+};
+
+const BrandApi = { list, editBrand, getBrand, activate, deactivate };
 export { BrandApi };
