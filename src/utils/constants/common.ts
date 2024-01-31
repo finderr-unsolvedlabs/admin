@@ -3,6 +3,8 @@ export const FallbackImage =
 
 export const dateFormat = "DD MMM YY";
 
+export const dateInputFormat = "YYYY-MM-DD";
+
 export const ClothSizes = [
   "XS",
   "S",

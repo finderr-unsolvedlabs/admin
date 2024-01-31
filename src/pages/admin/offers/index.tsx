@@ -2,10 +2,10 @@ import { SidebarLayout } from "@/components/Layout/SidebarLayout";
 import { AdminSidebar } from "@/components/Sidebar/AdminSidebar";
 import Link from "next/link";
 import React, { useEffect } from "react";
-import EventsTable from "@/components/Tables/EventsTable";
 import { IOfferListResponse } from "@/services/interfaces/common";
 import { useRouter } from "next/router";
 import { OffersApi } from "@/services/api/offers";
+import OffersTable from "@/components/Tables/OffersTable";
 
 const Offers = () => {
   return (
@@ -44,7 +44,7 @@ const Main = () => {
       {offers === null ? (
         <div>No Offers</div>
       ) : (
-        <EventsTable title="Offers List" eventsData={offers} />
+        <OffersTable title="Offers List" offersData={offers} />
       )}
     </div>
   );

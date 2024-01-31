@@ -161,6 +161,7 @@ export interface IEventListResponse extends IPaginatedResultBase {
 }
 
 export interface IEvent extends IBaseInfo {
+  _id: string;
   slug: string;
 }
 
@@ -169,6 +170,7 @@ export interface IOfferListResponse extends IPaginatedResultBase {
 }
 
 export interface IOfferModel extends IBaseInfo {
+  _id: string;
   slug: string;
   brand?: IBrandModel;
 }
