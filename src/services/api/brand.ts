@@ -5,7 +5,12 @@ import { IBrandUpdateForm } from "../interfaces/forms";
 
 const baseUrl = `/admin/brands`;
 
-const list = (): Promise<AxiosResponse<IBrandModel[]>> => {
+export interface IBrandListResponse extends IBrandModel {
+  activeProductsCount: number;
+  totalProducts: number;
+}
+
+const list = (): Promise<AxiosResponse<IBrandListResponse[]>> => {
   return sendRequest(baseUrl);
 };
 

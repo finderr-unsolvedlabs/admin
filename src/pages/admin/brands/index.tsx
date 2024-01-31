@@ -1,12 +1,12 @@
 import { SidebarLayout } from "@/components/Layout/SidebarLayout";
 import { SidebarsMainLoader } from "@/components/Loaders/SidebarsMainLoader";
 import { AdminSidebar } from "@/components/Sidebar/AdminSidebar";
-import { BrandApi } from "@/services/api/brand";
+import { BrandApi, IBrandListResponse } from "@/services/api/brand";
 import { IBrandModel } from "@/services/interfaces/common";
 import React, { useEffect, useState } from "react";
 
 const Brands = () => {
-  const [brandsList, setBrandList] = useState<IBrandModel[]>([]);
+  const [brandsList, setBrandList] = useState<IBrandListResponse[]>([]);
   useEffect(() => {
     setBrandList([]);
     BrandApi.list().then(({ data }) => {
@@ -25,7 +25,7 @@ const Brands = () => {
 };
 
 interface Props {
-  brandsList: IBrandModel[];
+  brandsList: IBrandListResponse[];
 }
 
 const Main = ({ brandsList }: Props) => {
@@ -96,6 +96,9 @@ const Main = ({ brandsList }: Props) => {
                 Rating
               </th>
               <th scope="col" className="px-6 py-3">
+                Active Ratio
+              </th>
+              <th scope="col" className="px-6 py-3">
                 Actions
               </th>
             </tr>
@@ -125,18 +128,15 @@ const Main = ({ brandsList }: Props) => {
                       {brand.rating}
                     </td>
                     <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                      {`${brand.activeProductsCount} / ${brand.totalProducts}`}
+                    </td>
+                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                       <div className="flex items-center space-x-4">
                         <a
                           href={`/admin/brands/${brand._id}/edit`}
                           className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                         >
                           Edit
-                        </a>
-                        <a
-                          href="#"
-                          className="font-medium text-red-600 dark:text-red-500 hover:underline"
-                        >
-                          Remove
                         </a>
                       </div>
                     </td>
