@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { IUserDetails, IUserListResponse } from "@/services/api/user";
+import React from "react";
+import { IUserListResponse } from "@/services/api/user";
 import LaunchIcon from "@mui/icons-material/Launch";
 import { Icon } from "@mui/material";
 import moment from "moment";
-import Link from "next/link";
 import { dateFormat } from "@/utils/constants/common";
 import { useRouter } from "next/router";
+import SwapVertIcon from "@mui/icons-material/SwapVert";
 
 type Props = {
   userList: IUserListResponse;
@@ -16,10 +16,29 @@ type Props = {
 const UsersTable = ({ userList, handlePageChange, itemsPerPage }: Props) => {
   const router = useRouter();
   const page = parseInt(router.query.page as string) || 1;
+  const sortBy = (router.query.sortBy as string) || "lastVisitedTime";
+  const order = (router.query.order as string) || "descending";
+
   const {
     pagination: { total },
     data: users,
   } = userList;
+
+  const toggleSortOrder = () => {
+    if (order === "ascending") {
+      router.push(`/admin/users?page=1&sortBy=${sortBy}&order=descending`);
+    } else {
+      router.push(`/admin/users?page=1&sortBy=${sortBy}&order=ascending`);
+    }
+  };
+
+  const handleHeaderClick = (field: string) => {
+    if (sortBy === field) {
+      toggleSortOrder();
+    } else {
+      router.push(`/admin/users?page=1&sortBy=${field}&order=descending`);
+    }
+  };
 
   const pagesOptions = [10, 20, 30, 50];
 
@@ -42,19 +61,44 @@ const UsersTable = ({ userList, handlePageChange, itemsPerPage }: Props) => {
         <table className="w-full text-sm text-left rtl:text-right text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr className="border">
-              <th scope="col" className="px-6 py-3">
+              <th
+                onClick={() => handleHeaderClick("user_name")}
+                scope="col"
+                className="px-6 py-3 cursor-pointer"
+              >
+                <SwapVertIcon style={{ fontSize: "20px" }} />
                 User Name
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th
+                onClick={() => handleHeaderClick("totalProductsinCart")}
+                scope="col"
+                className="px-6 py-3 cursor-pointer"
+              >
+                <SwapVertIcon style={{ fontSize: "20px" }} />
                 Products in Cart
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th
+                onClick={() => handleHeaderClick("wishlist")}
+                scope="col"
+                className="px-6 py-3 cursor-pointer"
+              >
+                <SwapVertIcon style={{ fontSize: "20px" }} />
                 Products in Wishlist
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th
+                onClick={() => handleHeaderClick("lastVisitedTime")}
+                scope="col"
+                className="px-6 py-3 cursor-pointer"
+              >
+                <SwapVertIcon style={{ fontSize: "20px" }} />
                 Last Visited
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th
+                onClick={() => handleHeaderClick("createdAt")}
+                scope="col"
+                className="px-6 py-3 cursor-pointer"
+              >
+                <SwapVertIcon style={{ fontSize: "20px" }} />
                 Created At
               </th>
               <th scope="col" className="px-6 py-3">
