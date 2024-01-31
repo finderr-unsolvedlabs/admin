@@ -15,5 +15,12 @@ const createEvent = (
   return sendRequest(`${baseUrl}/create`, { method: "POST", data: form });
 };
 
-const EventsApi = { list, createEvent };
+const updateEvent = (
+  _id: string,
+  data: ICreateEventForm
+): Promise<AxiosResponse<string>> => {
+  return sendRequest(`${baseUrl}/${_id}`, { method: "PATCH", data: data });
+};
+
+const EventsApi = { list, createEvent, updateEvent };
 export { EventsApi };

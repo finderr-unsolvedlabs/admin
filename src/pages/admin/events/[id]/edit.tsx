@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import moment from "moment";
-import { dateInputFormat } from "@/utils/constants/common";
+import { dateInputFormat, dateUpdateFormat } from "@/utils/constants/common";
 import { EventsApi } from "@/services/api/events";
 
 const edit = () => {
@@ -39,7 +39,6 @@ const Main = () => {
           const final_data = data.data.filter(
             (event) => event._id === event_id
           );
-          console.log(final_data[0]);
           const eventData = final_data[0];
           const form_data: ICreateEventForm = {
             title: eventData.title,
@@ -50,15 +49,27 @@ const Main = () => {
           };
           setFormData(form_data);
         })
-        .catch(() => {});
+        .catch((error) => {
+          alert("Something went wrong!");
+          console.error(error);
+        });
     }
   }, [event_id]);
 
   const formik = useFormik({
     initialValues: formData,
     enableReinitialize: true,
-    onSubmit: (lead) => {
-      console.log(lead);
+    onSubmit: (data) => {
+      data.expiry_date = moment(data.expiry_date).format(dateUpdateFormat);
+      EventsApi.updateEvent(event_id, data)
+        .then(({ data }) => {
+          alert(data);
+          router.push("/admin/events");
+        })
+        .catch((error) => {
+          alert("Something went wrong!");
+          console.error(error);
+        });
     },
   });
 

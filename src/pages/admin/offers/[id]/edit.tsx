@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import moment from "moment";
-import { dateInputFormat } from "@/utils/constants/common";
+import { dateInputFormat, dateUpdateFormat } from "@/utils/constants/common";
 
 const edit = () => {
   return (
@@ -36,7 +36,6 @@ export const emptyFormData: IForm = {
 const Main = () => {
   const router = useRouter();
   const offer_id = router.query.id as string;
-  // const [offerData, setOfferData] = useState<IOfferModel>();
   const [formData, setFormData] = useState<IForm>(emptyFormData);
 
   useEffect(() => {
@@ -46,8 +45,6 @@ const Main = () => {
           const final_data = data.data.filter(
             (offer) => offer._id === offer_id
           );
-          console.log(final_data[0]);
-          // setOfferData(final_data[0]);
           const offerData = final_data[0];
           const form_data: IForm = {
             title: offerData.title,
@@ -61,18 +58,32 @@ const Main = () => {
             },
             brand_id: offerData.brand?._id ?? undefined,
           };
-          form_data.brand = undefined;
+          if (offerData.brand == null) {
+            form_data.brand = undefined;
+          }
           setFormData(form_data);
         })
-        .catch(() => {});
+        .catch((error) => {
+          alert("Something went wrong!");
+          console.error(error);
+        });
     }
   }, [offer_id]);
 
   const formik = useFormik({
     initialValues: formData,
     enableReinitialize: true,
-    onSubmit: (lead) => {
-      console.log(lead);
+    onSubmit: (data) => {
+      data.expiry_date = moment(data.expiry_date).format(dateUpdateFormat);
+      OffersApi.updateOffer(offer_id, data)
+        .then(({ data }) => {
+          alert(data);
+          router.push("/admin/offers");
+        })
+        .catch((error) => {
+          alert("Something went wrong!");
+          console.error(error);
+        });
     },
   });
 
@@ -155,7 +166,7 @@ const Main = () => {
               required
             />
           </div>
-          <div className="mt-5 w-full">
+          {/* <div className="mt-5 w-full">
             <label className="block mb-2 text-sm font-medium text-gray-900">
               Logo S3 Key
             </label>
@@ -165,7 +176,7 @@ const Main = () => {
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="logo s3 key (optional)"
             />
-          </div>
+          </div> */}
           <div className="mt-5 w-full">
             <BrandSelector
               value={formik.values.brand || null}

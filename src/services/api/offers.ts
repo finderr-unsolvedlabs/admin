@@ -15,5 +15,12 @@ const createOffer = (
   return sendRequest(`${baseUrl}/create`, { method: "POST", data: form });
 };
 
-const OffersApi = { list, createOffer };
+const updateOffer = (
+  _id: string,
+  data: ICreateOfferForm
+): Promise<AxiosResponse<string>> => {
+  return sendRequest(`${baseUrl}/${_id}`, { method: "PATCH", data: data });
+};
+
+const OffersApi = { list, createOffer, updateOffer };
 export { OffersApi };

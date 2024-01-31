@@ -143,7 +143,7 @@ const Main = () => {
               required
             />
           </div>
-          <div className="mt-5 w-full">
+          {/* <div className="mt-5 w-full">
             <label className="block mb-2 text-sm font-medium text-gray-900">
               Logo S3 Key
             </label>
@@ -153,7 +153,7 @@ const Main = () => {
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="logo s3 key (optional)"
             />
-          </div>
+          </div> */}
           <div className="mt-5 w-full">
             <BrandSelector
               value={formData.brand || null}
