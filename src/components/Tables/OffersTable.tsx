@@ -1,6 +1,6 @@
 import React from "react";
 import LaunchIcon from "@mui/icons-material/Launch";
-import { IEventListResponse } from "@/services/interfaces/common";
+import { IOfferListResponse } from "@/services/interfaces/common";
 import { IconButton } from "@mui/material";
 import { useRouter } from "next/router";
 import { dateFormat } from "@/utils/constants/common";
@@ -8,26 +8,26 @@ import moment from "moment";
 
 type Props = {
   title: string;
-  eventsData: IEventListResponse;
+  offersData: IOfferListResponse;
 };
 
-const EventsTable = ({ title, eventsData }: Props) => {
+const OffersTable = ({ title, offersData }: Props) => {
   const router = useRouter();
   const page = parseInt(router.query.page as string) || 1;
   const {
     pagination: { total },
-    data: events,
-  } = eventsData;
+    data: offers,
+  } = offersData;
   const itemsPerPage = 10;
 
   const handleNextClick = () => {
     if (page === Math.ceil(total / itemsPerPage)) return;
-    router.replace(`/admin/events?page=${page + 1}`);
+    router.replace(`/admin/offers?page=${page + 1}`);
   };
 
   const handlePrevClick = () => {
     if (page === 1) return;
-    router.replace(`/admin/events?page=${page + 1}`);
+    router.replace(`/admin/offers?page=${page - 1}`);
   };
 
   return (
@@ -53,25 +53,25 @@ const EventsTable = ({ title, eventsData }: Props) => {
               </tr>
             </thead>
             <tbody>
-              {events.map((event, index) => {
+              {offers.map((offer, index) => {
                 return (
                   <tr className="bg-white border" key={index}>
                     <td
                       scope="row"
                       className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap"
                     >
-                      {event.title}
+                      {offer.title}
                     </td>
                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
-                      {event.action.label}
+                      {offer.action.label}
                     </td>
                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
-                      {moment(event.expiry_date).format(dateFormat)}
+                      {moment(offer.expiry_date).format(dateFormat)}
                     </td>
                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
                       <div className="flex items-center space-x-4">
                         <a
-                          href={`/admin/events/${event._id}/edit`}
+                          href={`/admin/offers/${offer._id}/edit`}
                           className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                         >
                           Edit
@@ -82,7 +82,7 @@ const EventsTable = ({ title, eventsData }: Props) => {
                         >
                           Remove
                         </a>
-                        <IconButton href={event.action.url} target="_blank">
+                        <IconButton href={offer.action.url} target="_blank">
                           <LaunchIcon style={{ color: "black" }} />
                         </IconButton>
                       </div>
@@ -164,4 +164,4 @@ const EventsTable = ({ title, eventsData }: Props) => {
   );
 };
 
-export default EventsTable;
+export default OffersTable;

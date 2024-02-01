@@ -1,13 +1,14 @@
 import { SidebarLayout } from "@/components/Layout/SidebarLayout";
 import { AdminSidebar } from "@/components/Sidebar/AdminSidebar";
-import { BrandSelector } from "@/components/selectors/BrandSelector";
-import { OffersApi } from "@/services/api/offers";
-import { TOption } from "@/services/interfaces/common";
-import { ICreateOfferForm } from "@/services/interfaces/forms";
+import { ICreateEventForm } from "@/services/interfaces/forms";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useFormik } from "formik";
+import moment from "moment";
+import { dateInputFormat, dateUpdateFormat } from "@/utils/constants/common";
+import { EventsApi } from "@/services/api/events";
 
-const create = () => {
+const edit = () => {
   return (
     <SidebarLayout
       MainComponent={<Main />}
@@ -16,11 +17,7 @@ const create = () => {
   );
 };
 
-interface IForm extends ICreateOfferForm {
-  brand?: TOption;
-}
-
-export const emptyFormData: IForm = {
+export const emptyFormData: ICreateEventForm = {
   title: "",
   imageKey: "",
   expiry_date: "",
@@ -32,42 +29,64 @@ export const emptyFormData: IForm = {
 
 const Main = () => {
   const router = useRouter();
+  const event_id = router.query.id as string;
+  const [formData, setFormData] = useState<ICreateEventForm>(emptyFormData);
 
-  const [formData, setFormData] = useState<IForm>(emptyFormData);
+  useEffect(() => {
+    if (event_id) {
+      EventsApi.list(1)
+        .then(({ data }) => {
+          const final_data = data.data.filter(
+            (event) => event._id === event_id
+          );
+          const eventData = final_data[0];
+          const form_data: ICreateEventForm = {
+            title: eventData.title,
+            imageKey: eventData.image.slug,
+            expiry_date: eventData.expiry_date,
+            action: eventData.action,
+            description: eventData.description ?? undefined,
+          };
+          setFormData(form_data);
+        })
+        .catch((error) => {
+          alert("Something went wrong!");
+          console.error(error);
+        });
+    }
+  }, [event_id]);
 
-  const submitHandler = (e: React.ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const dateParts = formData.expiry_date.split("-");
-    const expiry_date_formatted = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-    formData.expiry_date = expiry_date_formatted;
-
-    OffersApi.createOffer(formData)
-      .then(({ data }) => {
-        alert("Offer Added Successfully");
-        router.push("/admin/offers");
-      })
-      .catch((error) => {
-        alert("Something went wrong!");
-        console.error(error);
-      });
-  };
+  const formik = useFormik({
+    initialValues: formData,
+    enableReinitialize: true,
+    onSubmit: (data) => {
+      data.expiry_date = moment(data.expiry_date).format(dateUpdateFormat);
+      EventsApi.updateEvent(event_id, data)
+        .then(({ data }) => {
+          alert(data);
+          router.push("/admin/events");
+        })
+        .catch((error) => {
+          alert("Something went wrong!");
+          console.error(error);
+        });
+    },
+  });
 
   return (
     <div className="flex flex-col gap-2 p-4 w-full h-full">
-      <h1 className="text-2xl font-semibold">Add New Offer</h1>
-      <form onSubmit={submitHandler}>
+      <h1 className="text-2xl font-semibold">Edit Event</h1>
+      <form onSubmit={formik.handleSubmit}>
         <div className="flex justify-center gap-2">
           <div className="mt-5 w-full">
             <label className="block mb-2 text-sm font-medium text-gray-900">
               Title*
             </label>
             <input
-              id="e_title"
+              id="title"
               type="text"
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
+              value={formik.values.title}
+              onChange={formik.handleChange}
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="Title"
               required
@@ -80,9 +99,8 @@ const Main = () => {
             <input
               id="expiry_date"
               type="date"
-              onChange={(e) =>
-                setFormData({ ...formData, expiry_date: e.target.value })
-              }
+              value={moment(formik.values.expiry_date).format(dateInputFormat)}
+              onChange={formik.handleChange}
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="Select date"
               required
@@ -95,14 +113,10 @@ const Main = () => {
               Url Label*
             </label>
             <input
-              id="url_label"
+              id="action.label"
+              value={formik.values?.action?.label}
               type="text"
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  action: { label: e.target.value, url: formData.action.url },
-                })
-              }
+              onChange={formik.handleChange}
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="Link Label"
               required
@@ -113,14 +127,10 @@ const Main = () => {
               Url*
             </label>
             <input
-              id="url"
+              id="action.url"
               type="text"
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  action: { url: e.target.value, label: formData.action.label },
-                })
-              }
+              value={formik.values?.action?.url}
+              onChange={formik.handleChange}
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="Url"
               required
@@ -133,38 +143,13 @@ const Main = () => {
               Image S3 Key*
             </label>
             <input
-              id="image_s3_key"
+              id="imageKey"
               type="text"
-              onChange={(e) =>
-                setFormData({ ...formData, imageKey: e.target.value })
-              }
+              value={formik.values.imageKey}
+              onChange={formik.handleChange}
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="image s3 key"
               required
-            />
-          </div>
-          {/* <div className="mt-5 w-full">
-            <label className="block mb-2 text-sm font-medium text-gray-900">
-              Logo S3 Key
-            </label>
-            <input
-              id="logo_s3_key"
-              type="text"
-              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              placeholder="logo s3 key (optional)"
-            />
-          </div> */}
-          <div className="mt-5 w-full">
-            <BrandSelector
-              value={formData.brand || null}
-              onchange={(option) => {
-                const _option = option as TOption;
-                setFormData({
-                  ...formData,
-                  brand_id: _option?.value,
-                  brand: _option,
-                });
-              }}
             />
           </div>
         </div>
@@ -173,11 +158,10 @@ const Main = () => {
             Description
           </label>
           <textarea
-            id="desc"
+            id="description"
             rows={4}
-            onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
-            }
+            value={formik.values.description}
+            onChange={formik.handleChange}
             placeholder="Description (optional)"
             className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           />
@@ -187,7 +171,7 @@ const Main = () => {
             type="submit"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
           >
-            Submit
+            Update
           </button>
         </div>
       </form>
@@ -195,4 +179,4 @@ const Main = () => {
   );
 };
 
-export default create;
+export default edit;

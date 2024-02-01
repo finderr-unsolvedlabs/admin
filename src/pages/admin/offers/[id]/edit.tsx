@@ -5,9 +5,12 @@ import { OffersApi } from "@/services/api/offers";
 import { TOption } from "@/services/interfaces/common";
 import { ICreateOfferForm } from "@/services/interfaces/forms";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useFormik } from "formik";
+import moment from "moment";
+import { dateInputFormat, dateUpdateFormat } from "@/utils/constants/common";
 
-const create = () => {
+const edit = () => {
   return (
     <SidebarLayout
       MainComponent={<Main />}
@@ -32,42 +35,72 @@ export const emptyFormData: IForm = {
 
 const Main = () => {
   const router = useRouter();
-
+  const offer_id = router.query.id as string;
   const [formData, setFormData] = useState<IForm>(emptyFormData);
 
-  const submitHandler = (e: React.ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (offer_id) {
+      OffersApi.list(1)
+        .then(({ data }) => {
+          const final_data = data.data.filter(
+            (offer) => offer._id === offer_id
+          );
+          const offerData = final_data[0];
+          const form_data: IForm = {
+            title: offerData.title,
+            imageKey: offerData.image.slug,
+            expiry_date: offerData.expiry_date,
+            action: offerData.action,
+            description: offerData.description ?? undefined,
+            brand: {
+              label: offerData.brand?.name ?? "",
+              value: offerData.brand?._id ?? "",
+            },
+            brand_id: offerData.brand?._id ?? undefined,
+          };
+          if (offerData.brand == null) {
+            form_data.brand = undefined;
+          }
+          setFormData(form_data);
+        })
+        .catch((error) => {
+          alert("Something went wrong!");
+          console.error(error);
+        });
+    }
+  }, [offer_id]);
 
-    const dateParts = formData.expiry_date.split("-");
-    const expiry_date_formatted = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-    formData.expiry_date = expiry_date_formatted;
-
-    OffersApi.createOffer(formData)
-      .then(({ data }) => {
-        alert("Offer Added Successfully");
-        router.push("/admin/offers");
-      })
-      .catch((error) => {
-        alert("Something went wrong!");
-        console.error(error);
-      });
-  };
+  const formik = useFormik({
+    initialValues: formData,
+    enableReinitialize: true,
+    onSubmit: (data) => {
+      data.expiry_date = moment(data.expiry_date).format(dateUpdateFormat);
+      OffersApi.updateOffer(offer_id, data)
+        .then(({ data }) => {
+          alert(data);
+          router.push("/admin/offers");
+        })
+        .catch((error) => {
+          alert("Something went wrong!");
+          console.error(error);
+        });
+    },
+  });
 
   return (
     <div className="flex flex-col gap-2 p-4 w-full h-full">
-      <h1 className="text-2xl font-semibold">Add New Offer</h1>
-      <form onSubmit={submitHandler}>
+      <h1 className="text-2xl font-semibold">Edit Offer</h1>
+      <form onSubmit={formik.handleSubmit}>
         <div className="flex justify-center gap-2">
           <div className="mt-5 w-full">
             <label className="block mb-2 text-sm font-medium text-gray-900">
               Title*
             </label>
             <input
-              id="e_title"
+              id="title"
               type="text"
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
+              value={formik.values.title}
+              onChange={formik.handleChange}
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="Title"
               required
@@ -80,9 +113,8 @@ const Main = () => {
             <input
               id="expiry_date"
               type="date"
-              onChange={(e) =>
-                setFormData({ ...formData, expiry_date: e.target.value })
-              }
+              value={moment(formik.values.expiry_date).format(dateInputFormat)}
+              onChange={formik.handleChange}
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="Select date"
               required
@@ -95,14 +127,10 @@ const Main = () => {
               Url Label*
             </label>
             <input
-              id="url_label"
+              id="action.label"
+              value={formik.values?.action?.label}
               type="text"
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  action: { label: e.target.value, url: formData.action.url },
-                })
-              }
+              onChange={formik.handleChange}
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="Link Label"
               required
@@ -113,14 +141,10 @@ const Main = () => {
               Url*
             </label>
             <input
-              id="url"
+              id="action.url"
               type="text"
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  action: { url: e.target.value, label: formData.action.label },
-                })
-              }
+              value={formik.values?.action?.url}
+              onChange={formik.handleChange}
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="Url"
               required
@@ -133,11 +157,10 @@ const Main = () => {
               Image S3 Key*
             </label>
             <input
-              id="image_s3_key"
+              id="imageKey"
               type="text"
-              onChange={(e) =>
-                setFormData({ ...formData, imageKey: e.target.value })
-              }
+              value={formik.values.imageKey}
+              onChange={formik.handleChange}
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="image s3 key"
               required
@@ -156,14 +179,11 @@ const Main = () => {
           </div> */}
           <div className="mt-5 w-full">
             <BrandSelector
-              value={formData.brand || null}
+              value={formik.values.brand || null}
               onchange={(option) => {
                 const _option = option as TOption;
-                setFormData({
-                  ...formData,
-                  brand_id: _option?.value,
-                  brand: _option,
-                });
+                formik.setFieldValue("brand_id", _option?.value);
+                formik.setFieldValue("brand", _option);
               }}
             />
           </div>
@@ -173,11 +193,10 @@ const Main = () => {
             Description
           </label>
           <textarea
-            id="desc"
+            id="description"
             rows={4}
-            onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
-            }
+            value={formik.values.description}
+            onChange={formik.handleChange}
             placeholder="Description (optional)"
             className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           />
@@ -187,7 +206,7 @@ const Main = () => {
             type="submit"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
           >
-            Submit
+            Update
           </button>
         </div>
       </form>
@@ -195,4 +214,4 @@ const Main = () => {
   );
 };
 
-export default create;
+export default edit;
