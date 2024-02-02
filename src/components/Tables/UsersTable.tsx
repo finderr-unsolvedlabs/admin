@@ -36,7 +36,7 @@ const UsersTable = ({ userList, handlePageChange, itemsPerPage }: Props) => {
     if (sortBy === field) {
       toggleSortOrder();
     } else {
-      router.push(`/admin/users?page=1&sortBy=${field}&order=descending`);
+      router.push(`/admin/users?page=1&sortBy=${field}&order=ascending`);
     }
   };
 
@@ -46,12 +46,16 @@ const UsersTable = ({ userList, handlePageChange, itemsPerPage }: Props) => {
 
   const handleNextClick = () => {
     if (page === Math.ceil(total / itemsPerPage)) return;
-    router.replace(`/admin/users?page=${page + 1}`);
+    router.replace(
+      `/admin/users?page=${page + 1}&sortBy=${sortBy}&order=${order}`
+    );
   };
 
   const handlePrevClick = () => {
     if (page === 1) return;
-    router.replace(`/admin/users?page=${page - 1}`);
+    router.replace(
+      `/admin/users?page=${page - 1}&sortBy=${sortBy}&order=${order}`
+    );
   };
 
   return (
@@ -62,15 +66,15 @@ const UsersTable = ({ userList, handlePageChange, itemsPerPage }: Props) => {
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr className="border">
               <th
-                onClick={() => handleHeaderClick("user_name")}
+                // onClick={() => handleHeaderClick("user_name")}
                 scope="col"
-                className="px-6 py-3 cursor-pointer"
+                className="px-6 py-3"
               >
-                <SwapVertIcon style={{ fontSize: "20px" }} />
+                {/* <SwapVertIcon style={{ fontSize: "20px" }} /> */}
                 User Name
               </th>
               <th
-                onClick={() => handleHeaderClick("totalProductsinCart")}
+                onClick={() => handleHeaderClick("totalProductsInCart")}
                 scope="col"
                 className="px-6 py-3 cursor-pointer"
               >
