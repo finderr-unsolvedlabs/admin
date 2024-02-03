@@ -48,6 +48,9 @@ const EventsTable = ({ title, eventsData }: Props) => {
                   Expiry Date
                 </th>
                 <th scope="col" className="px-4 py-3">
+                  Status
+                </th>
+                <th scope="col" className="px-4 py-3">
                   Actions
                 </th>
               </tr>
@@ -67,6 +70,13 @@ const EventsTable = ({ title, eventsData }: Props) => {
                     </td>
                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
                       {moment(event.expiry_date).format(dateFormat)}
+                    </td>
+                    <td className="px-4 py-2 font-medium whitespace-nowrap">
+                      {new Date(event.expiry_date) >= new Date() ? (
+                        <span className="text-green-500">Active</span>
+                      ) : (
+                        <span className="text-red-500">Expired</span>
+                      )}
                     </td>
                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
                       <div className="flex items-center space-x-4">
