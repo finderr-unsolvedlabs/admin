@@ -29,7 +29,12 @@ export interface IUserListResponse extends IPaginatedResultBase {
   data: IListUser[];
 }
 
-const list = (props: IPaginateQueryBase): AxiosPromise<IUserListResponse> => {
+export interface IPaginateSortQuery extends IPaginateQueryBase {
+  sortBy?: string;
+  order?: string;
+}
+
+const list = (props: IPaginateSortQuery): AxiosPromise<IUserListResponse> => {
   return sendRequest(`${baseUrl}`, {
     method: "get",
     params: { ...props },

@@ -8,15 +8,19 @@ import { useRouter } from "next/router";
 
 const Page = () => {
   const router = useRouter();
+  const sortBy = router.query.sortBy as string;
+  const order = router.query.order as string;
   const page = parseInt(router.query.page as string) || 1;
   const [itemsPerPage, setItemsPerPage] = useState<number>(10);
   const [usersList, setUsersList] = useState<IUserListResponse>();
   useEffect(() => {
     setUsersList(undefined);
-    UserApi.list({ page, limit: itemsPerPage }).then(({ data }) => {
-      setUsersList(data);
-    });
-  }, [page, itemsPerPage]);
+    UserApi.list({ page, limit: itemsPerPage, sortBy, order }).then(
+      ({ data }) => {
+        setUsersList(data);
+      }
+    );
+  }, [page, itemsPerPage, sortBy, order]);
 
   const handleItemsPerPageChange = (items: number) => {
     setItemsPerPage(items);
