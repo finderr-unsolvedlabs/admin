@@ -68,6 +68,9 @@ export interface IBrandModel {
   contact: { phone: string };
   description: string | null;
   cover_images: IImageModel[];
+  social_links?: {
+    instagram?: string;
+  };
 }
 
 export interface ICategoryModel {

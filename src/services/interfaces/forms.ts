@@ -20,6 +20,9 @@ export interface IBrandUpdateForm {
   cover_images_keys: string[];
   state: string;
   rating: number;
+  social_links?: {
+    instagram?: string;
+  };
 }
 
 export interface ICreateEventForm {
