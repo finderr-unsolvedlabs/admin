@@ -25,6 +25,20 @@ export interface IBrandUpdateForm {
   };
 }
 
+export interface ICreateBrandForm {
+  name: string;
+  description: string | undefined;
+  contact: { phone: string | undefined };
+  logo_key: string;
+  profile_pic_key: string | undefined;
+  cover_images_keys: string[] | undefined;
+  rating: number;
+  social_links: {
+    instagram?: string | undefined;
+  };
+  slug?: string;
+}
+
 export interface ICreateEventForm {
   title: string;
   description?: string;

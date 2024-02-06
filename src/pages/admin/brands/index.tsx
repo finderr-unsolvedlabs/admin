@@ -2,7 +2,7 @@ import { SidebarLayout } from "@/components/Layout/SidebarLayout";
 import { SidebarsMainLoader } from "@/components/Loaders/SidebarsMainLoader";
 import { AdminSidebar } from "@/components/Sidebar/AdminSidebar";
 import { BrandApi, IBrandListResponse } from "@/services/api/brand";
-import { IBrandModel } from "@/services/interfaces/common";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 const Brands = () => {
@@ -65,7 +65,14 @@ const Main = ({ brandsList }: Props) => {
 
   return (
     <div className="p-4 mb-4 h-full bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 sm:p-6">
-      <h3 className="mb-4 text-xl font-semibold">Brands</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="mb-4 text-xl font-semibold">Brands</h3>
+        <Link href="/admin/brands/create">
+          <div className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none cursor-pointer">
+            Add New Brand
+          </div>
+        </Link>
+      </div>
       <div className="relative overflow-x-auto">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
