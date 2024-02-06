@@ -43,7 +43,7 @@ const Main = ({ brandData }: Props) => {
     rating: brandData.rating,
     state: brandData.state,
     logo_key: brandData.logo.slug,
-    profile_pic_key: brandData.profile_pic?.slug,
+    profile_pic_key: brandData?.profile_pic?.slug ?? undefined,
     contact: brandData.contact,
     cover_images_keys: brandData.cover_images.map((image) => image.slug),
     social_links: brandData.social_links,
@@ -62,6 +62,10 @@ const Main = ({ brandData }: Props) => {
 
       if (formData.social_links?.instagram == "") {
         formData.social_links.instagram = undefined;
+      }
+
+      if (formData.profile_pic_key == "") {
+        formData.profile_pic_key = undefined;
       }
 
       if (formData === convertedData) {
@@ -135,7 +139,7 @@ const Main = ({ brandData }: Props) => {
             <input
               id="contact.phone"
               type="text"
-              value={formik.values.contact.phone}
+              value={formik.values.contact?.phone ?? ""}
               onChange={formik.handleChange}
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="Phone number"
@@ -180,7 +184,7 @@ const Main = ({ brandData }: Props) => {
             <input
               id="profile_pic_key"
               type="text"
-              value={formik.values.profile_pic_key}
+              value={formik.values?.profile_pic_key ?? ""}
               onChange={formik.handleChange}
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="Profile pic s3 key"
@@ -229,7 +233,7 @@ const Main = ({ brandData }: Props) => {
             <input
               id="social_links.instagram"
               type="text"
-              value={formik.values.social_links?.instagram}
+              value={formik.values?.social_links?.instagram}
               onChange={formik.handleChange}
               className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               placeholder="Instagram Link"
@@ -243,7 +247,7 @@ const Main = ({ brandData }: Props) => {
           <textarea
             id="description"
             rows={5}
-            value={formik.values.description ?? ""}
+            value={formik.values?.description ?? ""}
             onChange={formik.handleChange}
             placeholder="Description (optional)"
             className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
