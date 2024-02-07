@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { sendRequest } from ".";
 import { IBrandModel } from "../interfaces/common";
-import { IBrandUpdateForm } from "../interfaces/forms";
+import { IBrandUpdateForm, ICreateBrandForm } from "../interfaces/forms";
 
 const baseUrl = `/admin/brands`;
 
@@ -16,6 +16,12 @@ const list = (): Promise<AxiosResponse<IBrandListResponse[]>> => {
 
 const getBrand = (id: string): Promise<AxiosResponse<IBrandModel>> => {
   return sendRequest(`${baseUrl}/${id}`);
+};
+
+const createBrand = (
+  data: ICreateBrandForm
+): Promise<AxiosResponse<string>> => {
+  return sendRequest(`${baseUrl}`, { method: "POST", data });
 };
 
 const editBrand = (
@@ -33,5 +39,12 @@ const deactivate = (id: string): Promise<AxiosResponse<string>> => {
   return sendRequest(`${baseUrl}/${id}/deactivate`, { method: "PATCH" });
 };
 
-const BrandApi = { list, editBrand, getBrand, activate, deactivate };
+const BrandApi = {
+  list,
+  editBrand,
+  getBrand,
+  createBrand,
+  activate,
+  deactivate,
+};
 export { BrandApi };
