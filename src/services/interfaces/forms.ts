@@ -1,4 +1,4 @@
-import { IAction } from "./common";
+import { IAction, IBrandModel } from "./common";
 
 export interface IProductUpdateForm {
   category?: string;
@@ -23,6 +23,7 @@ export interface IBrandUpdateForm {
   social_links?: {
     instagram?: string;
   };
+  store?: IBrandModel["store"];
 }
 
 export interface ICreateBrandForm {

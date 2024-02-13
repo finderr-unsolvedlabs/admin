@@ -71,6 +71,18 @@ export interface IBrandModel {
   social_links?: {
     instagram?: string;
   };
+  onlineOnly: boolean;
+  store?: {
+    address: {
+      address?: string;
+      google_map_link?: string;
+      google_map_cords?: {
+        lat: string;
+        lng: string;
+      };
+      area?: string;
+    };
+  };
 }
 
 export interface ICategoryModel {

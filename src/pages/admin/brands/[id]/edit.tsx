@@ -47,6 +47,7 @@ const Main = ({ brandData }: Props) => {
     contact: brandData.contact,
     cover_images_keys: brandData.cover_images.map((image) => image.slug),
     social_links: brandData.social_links,
+    store: brandData.store,
   };
 
   const [coverImages, setCoverImages] = useState<string>(
@@ -239,6 +240,78 @@ const Main = ({ brandData }: Props) => {
             />
           </div>
         </div>
+
+        <div className="flex justify-center gap-2">
+          <div className="mt-5 w-3/5">
+            <label className="block mb-2 text-sm font-medium text-gray-900">
+              Full Address
+            </label>
+            <input
+              id="store.address.address"
+              type="text"
+              value={formik.values.store?.address.address}
+              onChange={formik.handleChange}
+              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              placeholder="Cover Images s3 key"
+            />
+          </div>
+          <div className="mt-5 w-2/5">
+            <label className="block mb-2 text-sm font-medium text-gray-900">
+              Area
+            </label>
+            <input
+              id="store.address.area"
+              type="text"
+              value={formik.values.store?.address.area}
+              onChange={formik.handleChange}
+              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              placeholder="C Scheme"
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-center gap-2">
+          <div className="mt-5 flex-1">
+            <label className="block mb-2 text-sm font-medium text-gray-900">
+              Map link
+            </label>
+            <input
+              id="store.address.google_map_link"
+              type="text"
+              value={formik.values.store?.address.google_map_link}
+              onChange={formik.handleChange}
+              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              placeholder="Cover Images s3 key"
+            />
+          </div>
+          <div className="mt-5 flex-1">
+            <label className="block mb-2 text-sm font-medium text-gray-900">
+              Lat
+            </label>
+            <input
+              id="store.address.google_map_cords.lat"
+              type="text"
+              value={formik.values.store?.address.google_map_cords?.lat}
+              onChange={formik.handleChange}
+              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              placeholder="C Scheme"
+            />
+          </div>
+          <div className="mt-5 flex-1">
+            <label className="block mb-2 text-sm font-medium text-gray-900">
+              Lng
+            </label>
+            <input
+              id="store.address.google_map_cords.lng"
+              type="text"
+              value={formik.values.store?.address.google_map_cords?.lng}
+              onChange={formik.handleChange}
+              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              placeholder="C Scheme"
+            />
+          </div>
+        </div>
+
         <div className="mt-5">
           <label className="block mb-2 text-sm font-medium text-gray-900">
             Description*
