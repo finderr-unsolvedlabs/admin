@@ -6,6 +6,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Link from "next/link";
 import { startCase } from "lodash";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
 import HomeIcon from "@mui/icons-material/Home";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import CheckroomIcon from "@mui/icons-material/Checkroom";
@@ -25,6 +26,11 @@ const routes = [
   { name: "events", path: "/admin/events", icon: <EventAvailableIcon /> },
   { name: "offers", path: "/admin/offers", icon: <AttachMoneyIcon /> },
   { name: "users", path: "/admin/users", icon: <PeopleAltIcon /> },
+  {
+    name: "collections",
+    path: "/admin/collections",
+    icon: <CollectionsBookmarkIcon />,
+  },
 ];
 
 const openedMixin = (theme: Theme): CSSObject => ({

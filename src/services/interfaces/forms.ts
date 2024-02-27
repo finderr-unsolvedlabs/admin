@@ -56,3 +56,9 @@ export interface ICreateOfferForm {
   expiry_date: string;
   action: IAction;
 }
+
+export interface ICreateCollectionForm {
+  name: string;
+  description?: string;
+  products: string[];
+}

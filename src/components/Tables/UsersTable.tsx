@@ -42,8 +42,6 @@ const UsersTable = ({ userList, handlePageChange, itemsPerPage }: Props) => {
 
   const pagesOptions = [10, 20, 30, 50];
 
-  console.log(`tabel` + userList.data[0].user_name);
-
   const handleNextClick = () => {
     if (page === Math.ceil(total / itemsPerPage)) return;
     router.replace(

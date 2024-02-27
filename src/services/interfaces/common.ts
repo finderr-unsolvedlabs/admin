@@ -36,6 +36,12 @@ export interface IPaginateQueryBase {
   limit?: number;
 }
 
+export type TTableFields = {
+  name: string;
+  key: string;
+  transformation?: (value: any) => string;
+}[];
+
 // generated form constants
 export type ILeadTypes = (typeof LeadTypes)[number];
 export type TSizes = (typeof ClothSizes)[number];
@@ -124,6 +130,14 @@ export interface IBasicProduct
   brand_name: string;
 }
 export interface IWishlistItem extends IBasicProduct {}
+
+export interface ICollectionModel {
+  slug: string;
+  name: string;
+  description?: string;
+  products: IProductModel[];
+  state: "active" | "inactive";
+}
 
 export interface ICart extends ITimeStamp {
   user: string;
