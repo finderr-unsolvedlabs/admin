@@ -304,6 +304,23 @@ const Main = () => {
             >
               Deselect All
             </div>
+
+            <div
+              className="bg-brand text-white px-4 py-1 rounded cursor-pointer border border-brand hover:text-brand hover:bg-white"
+              onClick={() => {
+                navigator.clipboard
+                  .writeText(selectedProducts.join(","))
+                  .then(() => {
+                    alert("Text copied to clipboard");
+                  })
+                  .catch((err) => {
+                    alert("error in copy to clipboard");
+                  });
+                console.log(selectedProducts);
+              }}
+            >
+              Copy slugs
+            </div>
           </div>
 
           <div className="flex gap-5">
